@@ -1,0 +1,687 @@
+<html lang="ja"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>現場管理システム</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue:    #3b82f6; --blue-d: #2563eb; --blue-lt: #eff6ff;
+    --green:   #22c55e; --green-d: #16a34a;
+    --red:     #ef4444;
+    --gray:    #64748b; --gray-lt: #f1f5f9;
+    --border:  #e2e8f0; --text: #1e293b; --text-2: #64748b;
+    --shadow:  0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+    --radius:  10px; --cell-h: 130px;
+  }
+  body { font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Helvetica Neue',Arial,sans-serif; background: #f8fafc; color: var(--text); }
+
+  /* TOPBAR */
+  .topbar { background:#fff; border-bottom:1px solid var(--border); box-shadow:var(--shadow); position:sticky; top:0; z-index:50; }
+  .topbar-main { display:flex; align-items:center; justify-content:space-between; padding:0 24px; height:58px; }
+  .logo { display:flex; align-items:center; gap:10px; }
+  .logo-icon { font-size:22px; }
+  .logo-text { font-size:17px; font-weight:700; color:var(--text); letter-spacing:-.3px; }
+  .topbar-center { display:flex; align-items:center; gap:12px; }
+  .nav-btn { background:none; border:1.5px solid var(--border); width:34px; height:34px; border-radius:50%; font-size:16px; cursor:pointer; color:var(--gray); display:flex; align-items:center; justify-content:center; transition:all .15s; }
+  .nav-btn:hover { border-color:var(--blue); color:var(--blue); background:var(--blue-lt); }
+  .nav-title { font-size:18px; font-weight:700; color:var(--text); min-width:155px; text-align:center; }
+  .topbar-right { display:flex; align-items:center; gap:8px; }
+  .btn { display:inline-flex; align-items:center; gap:5px; border:none; padding:0 16px; height:36px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .btn-primary { background:var(--blue); color:#fff; } .btn-primary:hover { background:var(--blue-d); }
+  .btn-success { background:var(--green); color:#fff; } .btn-success:hover { background:var(--green-d); }
+  .btn-ghost { background:var(--gray-lt); color:var(--gray); } .btn-ghost:hover { background:var(--border); }
+  .btn-danger { background:#fee2e2; color:var(--red); } .btn-danger:hover { background:#fecaca; }
+
+  /* スタッフドロワー */
+  .staff-bar { border-top:1px solid var(--border); background:#fafbfc; overflow:hidden; max-height:0; transition:max-height .25s ease, padding .25s ease; }
+  .staff-bar.open { max-height:120px; padding:10px 24px; }
+  .staff-bar-inner { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .staff-bar-label { font-size:11px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.6px; white-space:nowrap; }
+  .staff-chips { display:flex; flex-wrap:wrap; gap:6px; flex:1; }
+  .staff-chip { display:flex; align-items:center; gap:5px; background:#fff; border:1.5px solid var(--border); border-radius:20px; padding:3px 10px 3px 5px; font-size:12px; font-weight:600; color:var(--text); }
+  .s-av { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; flex-shrink:0; }
+  .staff-chip-del { background:none; border:none; color:#cbd5e0; font-size:14px; cursor:pointer; padding:0; line-height:1; margin-left:2px; }
+  .staff-chip-del:hover { color:var(--red); }
+  .staff-add-inline { display:flex; gap:6px; }
+  .staff-add-inline input { height:30px; padding:0 10px; border:1.5px solid var(--border); border-radius:8px; font-size:13px; outline:none; width:110px; }
+  .staff-add-inline input:focus { border-color:var(--blue); }
+  .staff-add-inline button { height:30px; padding:0 12px; background:var(--blue); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; }
+  .staff-add-inline button:hover { background:var(--blue-d); }
+
+  /* 集計 */
+  .summary-bar { display:flex; gap:10px; padding:14px 24px 0; }
+  .s-card { background:#fff; border-radius:var(--radius); padding:12px 18px; flex:1; min-width:100px; box-shadow:var(--shadow); border:1px solid var(--border); }
+  .s-card .sl { font-size:11px; color:var(--text-2); margin-bottom:3px; font-weight:600; text-transform:uppercase; letter-spacing:.4px; }
+  .s-card .sv { font-size:24px; font-weight:700; line-height:1; }
+
+  /* 凡例 */
+  .legend { display:flex; align-items:center; gap:12px; padding:10px 24px; flex-wrap:wrap; }
+  .legend-label { font-size:11px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.5px; }
+  .legend-item { display:flex; align-items:center; gap:4px; font-size:12px; color:var(--text-2); }
+  .legend-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+
+  /* カレンダー */
+  .calendar-wrap { padding:8px 24px 24px; }
+  .calendar { background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-md); border:1px solid var(--border); }
+  .cal-head { display:grid; grid-template-columns:repeat(7,1fr); background:var(--gray-lt); border-bottom:1px solid var(--border); }
+  .cal-head-cell { text-align:center; padding:9px 0; font-size:12px; font-weight:700; color:var(--text-2); }
+  .cal-head-cell:first-child { color:#ef4444; }
+  .cal-head-cell:last-child { color:var(--blue); }
+  .cal-body { display:grid; grid-template-columns:repeat(7,1fr); }
+  .cal-cell { border-right:1px solid var(--border); border-bottom:1px solid var(--border); height:var(--cell-h); padding:5px 4px 4px; cursor:pointer; transition:background .1s; overflow:hidden; display:flex; flex-direction:column; }
+  .cal-cell:nth-child(7n) { border-right:none; }
+  .cal-cell:hover { background:#f8fafc; }
+  .cal-cell.other-month { background:#fafbfc; }
+  .cal-cell.other-month .date-num { color:#cbd5e0; }
+  .cal-cell.today { background:var(--blue-lt); }
+  .date-num { font-size:12px; font-weight:700; color:var(--text-2); width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0; margin-bottom:2px; align-self:flex-start; }
+  .cal-cell.today .date-num { background:var(--blue); color:#fff; }
+  .sun .date-num { color:#ef4444; }
+  .sat .date-num { color:var(--blue); }
+  .cal-cell.today.sun .date-num, .cal-cell.today.sat .date-num { color:#fff; }
+  .chips-wrap { flex:1; overflow:hidden; display:flex; flex-direction:column; gap:2px; }
+
+  /* 現場チップ — 3行構成 */
+  .job-chip { border-radius:4px; padding:2px 5px; font-size:10px; font-weight:600; color:#fff; cursor:pointer; line-height:1.45; overflow:hidden; flex-shrink:0; transition:opacity .1s; }
+  .job-chip:hover { opacity:.82; }
+  .job-chip.done { opacity:.38; }
+  .chip-site { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:700; }
+  .chip-sub { display:flex; gap:4px; opacity:.92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:9.5px; }
+  .chip-time { background:rgba(0,0,0,.18); border-radius:2px; padding:0 3px; flex-shrink:0; }
+  .chip-staff { overflow:hidden; text-overflow:ellipsis; }
+  .more-chip { font-size:10px; color:#94a3b8; padding:0 3px; flex-shrink:0; }
+
+  /* カテゴリカラー */
+  .type-aircon { background:#3b82f6; }
+  .type-floor  { background:#8b5cf6; }
+  .type-house  { background:#22c55e; }
+  .type-common { background:#06b6d4; }
+  .type-weed   { background:#f59e0b; }
+  .type-other  { background:#94a3b8; }
+
+  /* モーダル */
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(2px); }
+  .modal-bg.show { display:flex; }
+  .modal { background:#fff; border-radius:14px; width:460px; max-width:96vw; padding:28px; box-shadow:0 20px 50px rgba(0,0,0,.18); max-height:94vh; overflow-y:auto; }
+  .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .modal-header h2 { font-size:16px; font-weight:700; color:var(--text); }
+  .modal-close { background:var(--gray-lt); border:none; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer; color:var(--gray); display:flex; align-items:center; justify-content:center; }
+  .modal-close:hover { background:var(--border); }
+  .form-section { margin-bottom:16px; }
+  .form-section label { display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:5px; text-transform:uppercase; letter-spacing:.4px; }
+  .form-section input, .form-section select, .form-section textarea { width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; color:var(--text); background:#fff; outline:none; transition:border-color .15s; }
+  .form-section input:focus, .form-section select:focus, .form-section textarea:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(59,130,246,.12); }
+  .form-section textarea { resize:vertical; min-height:56px; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .seg { display:flex; background:var(--gray-lt); border-radius:8px; padding:3px; gap:3px; }
+  .seg input[type=radio] { display:none; }
+  .seg label { flex:1; text-align:center; padding:7px 0; font-size:13px; font-weight:600; color:var(--text-2); border-radius:6px; cursor:pointer; transition:all .15s; }
+  .seg input[type=radio]:checked + label { background:#fff; color:var(--blue); box-shadow:var(--shadow); }
+  .staff-check-list { border:1.5px solid var(--border); border-radius:8px; padding:8px; background:#fafbfc; max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:5px; }
+  .sc-item { display:flex; align-items:center; gap:8px; cursor:pointer; padding:2px 0; }
+  .sc-item input[type=checkbox] { width:15px; height:15px; accent-color:var(--blue); cursor:pointer; flex-shrink:0; }
+  .sc-lbl { font-size:14px; color:var(--text); }
+  .d-row { display:flex; gap:10px; margin-bottom:10px; font-size:14px; align-items:flex-start; }
+  .d-lbl { font-size:11px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.4px; min-width:72px; padding-top:2px; flex-shrink:0; }
+  .d-val { color:var(--text); line-height:1.5; }
+  .type-badge { display:inline-block; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:700; color:#fff; }
+  .staff-tags { display:flex; flex-wrap:wrap; gap:5px; }
+  .staff-tag { background:var(--blue-lt); color:var(--blue-d); border-radius:20px; padding:2px 10px; font-size:12px; font-weight:600; }
+  .done-toggle { background:var(--blue-lt); border:1.5px solid var(--blue); color:var(--blue-d); border-radius:8px; padding:7px 14px; font-size:13px; font-weight:700; cursor:pointer; margin-right:auto; transition:all .15s; }
+  .done-toggle.done { background:#f0fdf4; border-color:var(--green); color:var(--green-d); }
+  .divider { height:1px; background:var(--border); margin:16px 0; }
+  .btn-row { display:flex; gap:8px; justify-content:flex-end; margin-top:20px; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-main">
+    <div class="logo"><span class="logo-icon">🧹</span><span class="logo-text">現場管理システム</span></div>
+    <div class="topbar-center">
+      <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
+      <div class="nav-title" id="navTitle">2026年 6月</div>
+      <button class="nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost" onclick="goToday()">今月</button>
+      <button class="btn btn-ghost" onclick="toggleStaffBar()">👷 スタッフ管理</button>
+      <button class="btn btn-ghost" onclick="exportToFile()" title="データ込みのHTMLをダウンロード">📤 iPad用に書き出す</button>
+      <button class="btn btn-success" onclick="openAddModal()">＋ 新規登録</button>
+    </div>
+  </div>
+  <div class="staff-bar" id="staffBar">
+    <div class="staff-bar-inner">
+      <span class="staff-bar-label">スタッフ</span>
+      <div class="staff-chips" id="staffChips">
+    <div class="staff-chip">
+      <span class="s-av" style="background:#3b82f6">鈴</span>
+      鈴木
+      <button class="staff-chip-del" onclick="deleteStaff(101)">×</button>
+    </div>
+    <div class="staff-chip">
+      <span class="s-av" style="background:#06b6d4">糸</span>
+      糸賀
+      <button class="staff-chip-del" onclick="deleteStaff(102)">×</button>
+    </div>
+    <div class="staff-chip">
+      <span class="s-av" style="background:#f59e0b">塚</span>
+      塚本
+      <button class="staff-chip-del" onclick="deleteStaff(103)">×</button>
+    </div>
+    <div class="staff-chip">
+      <span class="s-av" style="background:#8b5cf6">天</span>
+      天ヶ谷
+      <button class="staff-chip-del" onclick="deleteStaff(104)">×</button>
+    </div>
+    <div class="staff-chip">
+      <span class="s-av" style="background:#ef4444">会</span>
+      会長
+      <button class="staff-chip-del" onclick="deleteStaff(105)">×</button>
+    </div>
+    <div class="staff-chip">
+      <span class="s-av" style="background:#22c55e">待</span>
+      待子
+      <button class="staff-chip-del" onclick="deleteStaff(106)">×</button>
+    </div>
+    <div class="staff-chip">
+      <span class="s-av" style="background:#ec4899">片</span>
+      片山
+      <button class="staff-chip-del" onclick="deleteStaff(107)">×</button>
+    </div>
+    <div class="staff-chip">
+      <span class="s-av" style="background:#0ea5e9">逆</span>
+      逆井
+      <button class="staff-chip-del" onclick="deleteStaff(108)">×</button>
+    </div>
+    <div class="staff-chip">
+      <span class="s-av" style="background:#14b8a6">社</span>
+      社長
+      <button class="staff-chip-del" onclick="deleteStaff(109)">×</button>
+    </div></div>
+      <div class="staff-add-inline">
+        <input type="text" id="newStaffName" placeholder="名前を入力" onkeydown="if(event.key==='Enter')addStaff()">
+        <button onclick="addStaff()">追加</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="summary-bar" id="summary">
+    <div class="s-card"><div class="sl">今月の現場</div><div class="sv">56<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
+    <div class="s-card"><div class="sl">完了</div><div class="sv" style="color:#16a34a">0<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
+    <div class="s-card"><div class="sl">未完了</div><div class="sv" style="color:#dc2626">56<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
+    <div class="s-card"><div class="sl">最多種別</div><div class="sv" style="font-size:14px;margin-top:4px">ハウスクリーニング</div></div></div>
+
+<div class="legend">
+  <span class="legend-label">種別</span>
+  <span class="legend-item"><span class="legend-dot type-aircon"></span>エアコン洗浄</span>
+  <span class="legend-item"><span class="legend-dot type-floor"></span>床清掃</span>
+  <span class="legend-item"><span class="legend-dot type-house"></span>ハウスクリーニング</span>
+  <span class="legend-item"><span class="legend-dot type-common"></span>共有部洗浄</span>
+  <span class="legend-item"><span class="legend-dot type-weed"></span>除草作業</span>
+  <span class="legend-item"><span class="legend-dot type-other"></span>その他</span>
+</div>
+
+<div class="calendar-wrap">
+  <div class="calendar">
+    <div class="cal-head">
+      <div class="cal-head-cell">日</div><div class="cal-head-cell">月</div><div class="cal-head-cell">火</div>
+      <div class="cal-head-cell">水</div><div class="cal-head-cell">木</div><div class="cal-head-cell">金</div>
+      <div class="cal-head-cell">土</div>
+    </div>
+    <div class="cal-body" id="calBody"><div class="cal-cell other-month sun"><div class="date-num">31</div><div class="chips-wrap"></div></div><div class="cal-cell"><div class="date-num">1</div><div class="chips-wrap"><div class="job-chip type-house" title="ワーキングガール [午前] 鈴木・天ヶ谷"><div class="chip-site">ワーキングガール</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・天ヶ谷</span></div></div><div class="job-chip type-weed" title="みどりのアパート草取り [午前] 糸賀・塚本"><div class="chip-site">みどりのアパート草取り</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本</span></div></div><div class="job-chip type-house" title="土浦市神立町戸建 [午前] 未定"><div class="chip-site">土浦市神立町戸建</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">未定</span></div></div><div class="more-chip">+1件</div></div></div><div class="cal-cell"><div class="date-num">2</div><div class="chips-wrap"><div class="job-chip type-house" title="JAホール龍ヶ崎 [午前] 糸賀・天ヶ谷"><div class="chip-site">JAホール龍ヶ崎</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">3</div><div class="chips-wrap"><div class="job-chip type-other" title="ベイクン [午前] 鈴木・会長"><div class="chip-site">ベイクン</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・会長</span></div></div></div></div><div class="cal-cell"><div class="date-num">4</div><div class="chips-wrap"><div class="job-chip type-house" title="たのうえ動物病院 [午前] 鈴木"><div class="chip-site">たのうえ動物病院</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div><div class="job-chip type-house" title="新石下賃貸住宅 [午前] 糸賀・天ヶ谷"><div class="chip-site">新石下賃貸住宅</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">5</div><div class="chips-wrap"><div class="job-chip type-common" title="タキロン [午前] 糸賀・天ヶ谷"><div class="chip-site">タキロン</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div><div class="job-chip type-common" title="チェスト・トーエネック [午前] 鈴木"><div class="chip-site">チェスト・トーエネック</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div></div></div><div class="cal-cell sat"><div class="date-num">6</div><div class="chips-wrap"><div class="job-chip type-house" title="オルガノ [午前] 鈴木・糸賀・塚本・天ヶ谷・会長・待子・片山"><div class="chip-site">オルガノ</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本・天ヶ谷・会長・待子・片山</span></div></div></div></div><div class="cal-cell sun"><div class="date-num">7</div><div class="chips-wrap"><div class="job-chip type-aircon" title="関東ビル [午前] 糸賀・天ヶ谷"><div class="chip-site">関東ビル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">8</div><div class="chips-wrap"><div class="job-chip type-house" title="日信ビル [午前] 鈴木・塚本"><div class="chip-site">日信ビル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・塚本</span></div></div><div class="job-chip type-house" title="こうの歯科 [午前] 糸賀・塚本"><div class="chip-site">こうの歯科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本</span></div></div></div></div><div class="cal-cell today"><div class="date-num">9</div><div class="chips-wrap"><div class="job-chip type-house" title="日信ビル [午前] 塚本"><div class="chip-site">日信ビル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本</span></div></div><div class="job-chip type-house" title="日信ビル [午後] 糸賀・塚本・天ヶ谷"><div class="chip-site">日信ビル</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">糸賀・塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">10</div><div class="chips-wrap"><div class="job-chip type-house" title="日信ビル [午前] 鈴木・塚本・天ヶ谷"><div class="chip-site">日信ビル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">11</div><div class="chips-wrap"><div class="job-chip type-house" title="つじ耳鼻咽喉科 [午前] 塚本・糸賀"><div class="chip-site">つじ耳鼻咽喉科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本・糸賀</span></div></div></div></div><div class="cal-cell"><div class="date-num">12</div><div class="chips-wrap"><div class="job-chip type-common" title="ナカケン・パス・鉄板 [午前] 天ヶ谷"><div class="chip-site">ナカケン・パス・鉄板</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">天ヶ谷</span></div></div></div></div><div class="cal-cell sat"><div class="date-num">13</div><div class="chips-wrap"><div class="job-chip type-other" title="害虫 [午前] 糸賀"><div class="chip-site">害虫</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀</span></div></div></div></div><div class="cal-cell sun"><div class="date-num">14</div><div class="chips-wrap"><div class="job-chip type-house" title="佐藤様邸 [午前] 鈴木・糸賀・塚本"><div class="chip-site">佐藤様邸</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本</span></div></div></div></div><div class="cal-cell"><div class="date-num">15</div><div class="chips-wrap"><div class="job-chip type-house" title="東京大学柏キャンパス [午前] 鈴木・糸賀・塚本"><div class="chip-site">東京大学柏キャンパス</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本</span></div></div></div></div><div class="cal-cell"><div class="date-num">16</div><div class="chips-wrap"><div class="job-chip type-house" title="鳥のじ [午前] 鈴木"><div class="chip-site">鳥のじ</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div><div class="job-chip type-weed" title="フラットフォレスト草取り [午後] 塚本・天ヶ谷"><div class="chip-site">フラットフォレスト草取り</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">17</div><div class="chips-wrap"><div class="job-chip type-house" title="くりの木歯科 [午前] 未定"><div class="chip-site">くりの木歯科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">未定</span></div></div><div class="job-chip type-house" title="千葉マリンこどもクリニック [午前] 未定"><div class="chip-site">千葉マリンこどもクリニック</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">未定</span></div></div><div class="job-chip type-house" title="あべ整形外科 [午後] 未定"><div class="chip-site">あべ整形外科</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">未定</span></div></div></div></div><div class="cal-cell"><div class="date-num">18</div><div class="chips-wrap"><div class="job-chip type-house" title="ゆめみ野クリニック [午前] 鈴木・塚本"><div class="chip-site">ゆめみ野クリニック</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・塚本</span></div></div><div class="job-chip type-aircon" title="古川邸 [午前] 塚本・天ヶ谷"><div class="chip-site">古川邸</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本・天ヶ谷</span></div></div><div class="job-chip type-house" title="アルゾーニ [午後] 塚本・天ヶ谷"><div class="chip-site">アルゾーニ</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">19</div><div class="chips-wrap"><div class="job-chip type-house" title="みらい平クリニック [午前] 糸賀・塚本"><div class="chip-site">みらい平クリニック</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本</span></div></div><div class="job-chip type-common" title="タキロン定期 [午前] 塚本・天ヶ谷"><div class="chip-site">タキロン定期</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell sat"><div class="date-num">20</div><div class="chips-wrap"><div class="job-chip type-house" title="積水ハウス5・6F [午前] 糸賀・塚本・天ヶ谷・逆井"><div class="chip-site">積水ハウス5・6F</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本・天ヶ谷・逆井</span></div></div></div></div><div class="cal-cell sun"><div class="date-num">21</div><div class="chips-wrap"><div class="job-chip type-house" title="大久保歯科医院 [午前] 鈴木・糸賀・塚本・天ヶ谷・片山"><div class="chip-site">大久保歯科医院</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本・天ヶ谷・片山</span></div></div><div class="job-chip type-house" title="清六家下妻店 [午後] 鈴木・糸賀・塚本"><div class="chip-site">清六家下妻店</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">鈴木・糸賀・塚本</span></div></div></div></div><div class="cal-cell"><div class="date-num">22</div><div class="chips-wrap"><div class="job-chip type-aircon" title="古河中エアコン [午前] 鈴木・会長・待子"><div class="chip-site">古河中エアコン</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・会長・待子</span></div></div><div class="job-chip type-house" title="スマイルサポート [午前] 塚本"><div class="chip-site">スマイルサポート</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本</span></div></div><div class="job-chip type-house" title="みらい平クリニック 残りガラス [午後] 糸賀・天ヶ谷"><div class="chip-site">みらい平クリニック 残りガラス</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">23</div><div class="chips-wrap"><div class="job-chip type-aircon" title="古河一高 [午前] 鈴木・塚本"><div class="chip-site">古河一高</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・塚本</span></div></div></div></div><div class="cal-cell"><div class="date-num">24</div><div class="chips-wrap"><div class="job-chip type-house" title="深澤歯科 [午前] 鈴木・天ヶ谷"><div class="chip-site">深澤歯科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・天ヶ谷</span></div></div><div class="job-chip type-house" title="清六家結城店 [午前] 鈴木・糸賀・塚本"><div class="chip-site">清六家結城店</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本</span></div></div><div class="job-chip type-house" title="政翔不動産 [午後] 鈴木・天ヶ谷"><div class="chip-site">政翔不動産</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">鈴木・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">25</div><div class="chips-wrap"><div class="job-chip type-aircon" title="なるしま内科 [午前] 糸賀・塚本・天ヶ谷"><div class="chip-site">なるしま内科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本・天ヶ谷</span></div></div><div class="job-chip type-house" title="マガーリ [午前] 糸賀・天ヶ谷"><div class="chip-site">マガーリ</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">26</div><div class="chips-wrap"><div class="job-chip type-house" title="坂本医院 [午前] 会長・糸賀"><div class="chip-site">坂本医院</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">会長・糸賀</span></div></div><div class="job-chip type-common" title="チェスト・トーエネック・ノーバル [午前] 鈴木"><div class="chip-site">チェスト・トーエネック・ノーバル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div><div class="job-chip type-house" title="日信第二ビル・サンライズビル [午後] 糸賀"><div class="chip-site">日信第二ビル・サンライズビル</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">糸賀</span></div></div></div></div><div class="cal-cell sat"><div class="date-num">27</div><div class="chips-wrap"><div class="job-chip type-house" title="かわごえ皮膚科 [午前] 未定"><div class="chip-site">かわごえ皮膚科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">未定</span></div></div><div class="job-chip type-aircon" title="木村邸 [午後] 鈴木"><div class="chip-site">木村邸</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">鈴木</span></div></div><div class="job-chip type-house" title="藤代紫水 [午後] 未定"><div class="chip-site">藤代紫水</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">未定</span></div></div></div></div><div class="cal-cell sun"><div class="date-num">28</div><div class="chips-wrap"><div class="job-chip type-house" title="埠頭 [午前] 糸賀・塚本・片山"><div class="chip-site">埠頭</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本・片山</span></div></div><div class="job-chip type-common" title="チェスト・トーエネック・ノーバル [午前] 鈴木"><div class="chip-site">チェスト・トーエネック・ノーバル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div></div></div><div class="cal-cell"><div class="date-num">29</div><div class="chips-wrap"><div class="job-chip type-house" title="スカイクリーン [午前] 鈴木・糸賀"><div class="chip-site">スカイクリーン</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀</span></div></div><div class="job-chip type-aircon" title="石下保育園 [午前] 塚本"><div class="chip-site">石下保育園</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本</span></div></div><div class="job-chip type-aircon" title="赤荻邸 [午前] 糸賀"><div class="chip-site">赤荻邸</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀</span></div></div><div class="more-chip">+1件</div></div></div><div class="cal-cell"><div class="date-num">30</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">1</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">2</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">3</div><div class="chips-wrap"></div></div><div class="cal-cell other-month sat"><div class="date-num">4</div><div class="chips-wrap"></div></div><div class="cal-cell other-month sun"><div class="date-num">5</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">6</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">7</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">8</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">9</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">10</div><div class="chips-wrap"></div></div><div class="cal-cell other-month sat"><div class="date-num">11</div><div class="chips-wrap"></div></div></div>
+  </div>
+</div>
+
+<!-- 登録・編集モーダル -->
+<div class="modal-bg" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">新規現場登録</h2>
+      <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+    </div>
+    <div class="form-section"><label>現場名 *</label><input type="text" id="f_site" placeholder="例：ワーキングガール"></div>
+    <div class="form-section"><label>顧客名</label><input type="text" id="f_customer" placeholder="例：田中 太郎"></div>
+    <div class="form-grid">
+      <div class="form-section"><label>作業日 *</label><input type="date" id="f_date"></div>
+      <div class="form-section">
+        <label>時間帯</label>
+        <div class="seg">
+          <input type="radio" name="ts" id="ts_am" value="am" checked=""><label for="ts_am">☀️ 午前</label>
+          <input type="radio" name="ts" id="ts_pm" value="pm"><label for="ts_pm">🌇 午後</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-section">
+      <label>作業種別 *</label>
+      <select id="f_type">
+        <option value="aircon">エアコン洗浄</option>
+        <option value="floor">床清掃</option>
+        <option value="house">ハウスクリーニング</option>
+        <option value="common">共有部洗浄</option>
+        <option value="weed">除草作業</option>
+        <option value="other">その他</option>
+      </select>
+    </div>
+    <div class="form-section"><label>担当スタッフ（複数可）</label><div class="staff-check-list" id="staffCheckList"></div></div>
+    <div class="form-section"><label>メモ</label><textarea id="f_memo" placeholder="備考・注意事項など"></textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="closeModal('editModal')">キャンセル</button>
+      <button class="btn btn-success" onclick="saveJob()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 詳細モーダル -->
+<div class="modal-bg" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="d_title"></h2>
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div id="d_badge" style="margin-bottom:12px"></div>
+    <div class="d-row"><span class="d-lbl">現場名</span><span class="d-val" id="d_site"></span></div>
+    <div class="d-row"><span class="d-lbl">顧客名</span><span class="d-val" id="d_customer"></span></div>
+    <div class="d-row"><span class="d-lbl">作業日</span><span class="d-val" id="d_date"></span></div>
+    <div class="d-row"><span class="d-lbl">時間帯</span><span class="d-val" id="d_time"></span></div>
+    <div class="d-row"><span class="d-lbl">担当</span><div class="staff-tags" id="d_staff"></div></div>
+    <div class="d-row"><span class="d-lbl">メモ</span><span class="d-val" id="d_memo"></span></div>
+    <div class="divider"></div>
+    <div class="btn-row">
+      <button class="btn btn-danger" onclick="deleteJob()">削除</button>
+      <button class="done-toggle" id="doneToggle" onclick="toggleDone()">完了にする ✓</button>
+      <button class="btn btn-ghost" onclick="openEditFromDetail()">編集</button>
+      <button class="btn btn-primary" onclick="closeModal('detailModal')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TYPE_LABELS  = { aircon:'エアコン洗浄', floor:'床清掃', house:'ハウスクリーニング', common:'共有部洗浄', weed:'除草作業', other:'その他' };
+const TYPE_CLASSES = { aircon:'type-aircon', floor:'type-floor', house:'type-house', common:'type-common', weed:'type-weed', other:'type-other' };
+const COLORS = ['#3b82f6','#06b6d4','#f59e0b','#8b5cf6','#ef4444','#22c55e','#ec4899','#0ea5e9','#14b8a6','#f97316'];
+
+let currentYear, currentMonth, jobs=[], staffs=[], editingId=null, viewingId=null;
+
+/* ---- PDF由来のスタッフ ---- */
+const DEFAULT_STAFFS = [
+  {id:101,name:'鈴木'},{id:102,name:'糸賀'},{id:103,name:'塚本'},
+  {id:104,name:'天ヶ谷'},{id:105,name:'会長'},{id:106,name:'待子'},
+  {id:107,name:'片山'},{id:108,name:'逆井'},{id:109,name:'社長'},
+];
+
+/* ---- PDF由来の現場データ（2026年6月） ---- */
+const PDF_JOBS = [
+  // 6/1
+  {site:'ワーキングガール',customer:'',date:'2026-06-01',time:'am',type:'house',staffIds:[101,104],memo:'9:00〜2人'},
+  {site:'みどりのアパート草取り',customer:'',date:'2026-06-01',time:'am',type:'weed',staffIds:[102,103],memo:'2人'},
+  {site:'土浦市神立町戸建',customer:'',date:'2026-06-01',time:'am',type:'house',staffIds:[],memo:'3人 外注:リファイン3'},
+  {site:'渡辺住建',customer:'',date:'2026-06-01',time:'am',type:'other',staffIds:[109],memo:'9:00〜1人'},
+  // 6/2
+  {site:'JAホール龍ヶ崎',customer:'',date:'2026-06-02',time:'am',type:'house',staffIds:[102,104],memo:'8:30〜2人 外注:K-BOX'},
+  // 6/3
+  {site:'ベイクン',customer:'',date:'2026-06-03',time:'am',type:'other',staffIds:[101,105],memo:'9:00〜1人 外注:植研'},
+  // 6/4
+  {site:'たのうえ動物病院',customer:'',date:'2026-06-04',time:'am',type:'house',staffIds:[101],memo:'9:00〜1人'},
+  {site:'新石下賃貸住宅',customer:'',date:'2026-06-04',time:'am',type:'house',staffIds:[102,104],memo:'3人 外注:リファイン'},
+  // 6/5
+  {site:'タキロン',customer:'',date:'2026-06-05',time:'am',type:'common',staffIds:[102,104],memo:'8:30〜 外注:パス・ナカケン・鉄板'},
+  {site:'チェスト・トーエネック',customer:'',date:'2026-06-05',time:'am',type:'common',staffIds:[101],memo:''},
+  // 6/6
+  {site:'オルガノ',customer:'',date:'2026-06-06',time:'am',type:'house',staffIds:[101,102,103,104,105,106,107],memo:'8:30〜7人'},
+  // 6/7
+  {site:'関東ビル',customer:'',date:'2026-06-07',time:'am',type:'aircon',staffIds:[102,104],memo:'天カセAC3台'},
+  // 6/8
+  {site:'日信ビル',customer:'',date:'2026-06-08',time:'am',type:'house',staffIds:[101,103],memo:'9:00〜3F〜14F 外注:リファイン'},
+  {site:'こうの歯科',customer:'',date:'2026-06-08',time:'am',type:'house',staffIds:[102,103],memo:'9:00〜3人 外注:リファイン3'},
+  // 6/9
+  {site:'日信ビル',customer:'',date:'2026-06-09',time:'am',type:'house',staffIds:[103],memo:'外注:リファイン'},
+  {site:'日信ビル',customer:'',date:'2026-06-09',time:'pm',type:'house',staffIds:[102,103,104],memo:'外注:リファイン'},
+  // 6/10
+  {site:'日信ビル',customer:'',date:'2026-06-10',time:'am',type:'house',staffIds:[101,103,104],memo:'9:00〜3F〜14F'},
+  // 6/11
+  {site:'つじ耳鼻咽喉科',customer:'',date:'2026-06-11',time:'am',type:'house',staffIds:[103,102],memo:'8:30〜3人 外注:リファイン'},
+  // 6/12
+  {site:'ナカケン・パス・鉄板',customer:'',date:'2026-06-12',time:'am',type:'common',staffIds:[104],memo:''},
+  // 6/13
+  {site:'害虫',customer:'',date:'2026-06-13',time:'am',type:'other',staffIds:[102],memo:''},
+  // 6/14
+  {site:'佐藤様邸',customer:'佐藤',date:'2026-06-14',time:'am',type:'house',staffIds:[101,102,103],memo:'8:30〜5人 外注:リファイン2'},
+  // 6/15
+  {site:'東京大学柏キャンパス',customer:'東京大学',date:'2026-06-15',time:'am',type:'house',staffIds:[101,102,103],memo:'9:00〜3人'},
+  // 6/16
+  {site:'鳥のじ',customer:'',date:'2026-06-16',time:'am',type:'house',staffIds:[101],memo:'9:00〜2人 外注:リファイン'},
+  {site:'フラットフォレスト草取り',customer:'',date:'2026-06-16',time:'pm',type:'weed',staffIds:[103,104],memo:''},
+  // 6/17
+  {site:'くりの木歯科',customer:'',date:'2026-06-17',time:'am',type:'house',staffIds:[],memo:''},
+  {site:'千葉マリンこどもクリニック',customer:'',date:'2026-06-17',time:'am',type:'house',staffIds:[],memo:'9:00〜2人'},
+  {site:'あべ整形外科',customer:'',date:'2026-06-17',time:'pm',type:'house',staffIds:[],memo:'13:00〜2人'},
+  // 6/18
+  {site:'ゆめみ野クリニック',customer:'',date:'2026-06-18',time:'am',type:'house',staffIds:[101,103],memo:'8:30〜2人'},
+  {site:'古川邸',customer:'古川',date:'2026-06-18',time:'am',type:'aircon',staffIds:[103,104],memo:'HKホーム 9:00〜AC2台'},
+  {site:'アルゾーニ',customer:'',date:'2026-06-18',time:'pm',type:'house',staffIds:[103,104],memo:'サニ 13:30〜2人'},
+  // 6/19
+  {site:'みらい平クリニック',customer:'',date:'2026-06-19',time:'am',type:'house',staffIds:[102,103],memo:'9:00〜3人'},
+  {site:'タキロン定期',customer:'',date:'2026-06-19',time:'am',type:'common',staffIds:[103,104],memo:'外注:リファイン・ナカケン・ナガイ'},
+  // 6/20
+  {site:'積水ハウス5・6F',customer:'積水ハウス',date:'2026-06-20',time:'am',type:'house',staffIds:[102,103,104,108],memo:'9:00〜4人'},
+  // 6/21
+  {site:'大久保歯科医院',customer:'',date:'2026-06-21',time:'am',type:'house',staffIds:[101,102,103,104,107],memo:'9:00〜4人'},
+  {site:'清六家下妻店',customer:'',date:'2026-06-21',time:'pm',type:'house',staffIds:[101,102,103],memo:''},
+  // 6/22
+  {site:'古河中エアコン',customer:'',date:'2026-06-22',time:'am',type:'aircon',staffIds:[101,105,106],memo:'広瀬 9:00〜 外注:リファイン'},
+  {site:'スマイルサポート',customer:'',date:'2026-06-22',time:'am',type:'house',staffIds:[103],memo:'Tic 9:00〜3人 外注:リファイン2'},
+  {site:'みらい平クリニック 残りガラス',customer:'',date:'2026-06-22',time:'pm',type:'house',staffIds:[102,104],memo:''},
+  // 6/23
+  {site:'古河一高',customer:'',date:'2026-06-23',time:'am',type:'aircon',staffIds:[101,103],memo:'9:00〜天カセAC4台'},
+  // 6/24
+  {site:'深澤歯科',customer:'',date:'2026-06-24',time:'am',type:'house',staffIds:[101,104],memo:'9:00〜2人'},
+  {site:'政翔不動産',customer:'',date:'2026-06-24',time:'pm',type:'house',staffIds:[101,104],memo:'事務所2人'},
+  {site:'清六家結城店',customer:'',date:'2026-06-24',time:'am',type:'house',staffIds:[101,102,103],memo:''},
+  // 6/25
+  {site:'なるしま内科',customer:'',date:'2026-06-25',time:'am',type:'aircon',staffIds:[102,103,104],memo:'9:00〜AC7台'},
+  {site:'マガーリ',customer:'',date:'2026-06-25',time:'am',type:'house',staffIds:[102,104],memo:'9:00〜2人'},
+  // 6/26
+  {site:'坂本医院',customer:'',date:'2026-06-26',time:'am',type:'house',staffIds:[105,102],memo:''},
+  {site:'チェスト・トーエネック・ノーバル',customer:'',date:'2026-06-26',time:'am',type:'common',staffIds:[101],memo:''},
+  {site:'日信第二ビル・サンライズビル',customer:'',date:'2026-06-26',time:'pm',type:'house',staffIds:[102],memo:''},
+  // 6/27
+  {site:'かわごえ皮膚科',customer:'',date:'2026-06-27',time:'am',type:'house',staffIds:[],memo:'9:30〜2人'},
+  {site:'木村邸',customer:'木村',date:'2026-06-27',time:'pm',type:'aircon',staffIds:[101],memo:'HKホーム 13:30〜AC2台 外注:リファイン'},
+  {site:'藤代紫水',customer:'',date:'2026-06-27',time:'pm',type:'house',staffIds:[],memo:'外注:リファイン2'},
+  // 6/28
+  {site:'埠頭',customer:'',date:'2026-06-28',time:'am',type:'house',staffIds:[102,103,107],memo:''},
+  {site:'チェスト・トーエネック・ノーバル',customer:'',date:'2026-06-28',time:'am',type:'common',staffIds:[101],memo:'外注:ナガイ'},
+  // 6/29
+  {site:'スカイクリーン',customer:'',date:'2026-06-29',time:'am',type:'house',staffIds:[101,102],memo:'サニ 9:00〜4人 外注:リファイン2'},
+  {site:'石下保育園',customer:'',date:'2026-06-29',time:'am',type:'aircon',staffIds:[103],memo:'9:00〜天吊り4台 外注:リファイン'},
+  {site:'赤荻邸',customer:'赤荻',date:'2026-06-29',time:'am',type:'aircon',staffIds:[102],memo:'9:00〜AC1台'},
+  {site:'サンユウテック',customer:'',date:'2026-06-29',time:'pm',type:'house',staffIds:[101,104],memo:'9:00〜3人'},
+];
+
+function init() {
+  const t=new Date(); currentYear=t.getFullYear(); currentMonth=t.getMonth()+1;
+  loadData();
+  if (!staffs.length) staffs=[...DEFAULT_STAFFS];
+  // 6月のPDFデータをマージ（既存データがなければ投入）
+  const has2026June = jobs.some(j=>j.date&&j.date.startsWith('2026-06'));
+  if (!has2026June) {
+    PDF_JOBS.forEach((j,i)=>{ jobs.push({...j, id: 2000+i, done:false}); });
+  }
+  saveData();
+  render();
+}
+
+function saveData(){
+  try { localStorage.setItem('hc5_jobs',JSON.stringify(jobs)); localStorage.setItem('hc5_staffs',JSON.stringify(staffs)); } catch(e){}
+}
+function loadData(){
+  try {
+    const j=localStorage.getItem('hc5_jobs'); if(j) jobs=JSON.parse(j);
+    const s=localStorage.getItem('hc5_staffs'); if(s) staffs=JSON.parse(s);
+  } catch(e){}
+}
+
+function sColor(i){ return COLORS[i%COLORS.length]; }
+function staffName(id){ const s=staffs.find(s=>s.id===id); return s?s.name:''; }
+function staffIdxByName(name){ return staffs.findIndex(s=>s.name===name); }
+function staffIdx(id){ return staffs.findIndex(s=>s.id===id); }
+
+/* ---- RENDER ---- */
+function render(){ renderNav(); renderSummary(); renderCalendar(); renderStaffChips(); }
+
+function renderNav(){
+  const n=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  document.getElementById('navTitle').textContent=`${currentYear}年 ${n[currentMonth-1]}`;
+}
+
+function renderSummary(){
+  const mj=jobs.filter(j=>{ const[y,m]=j.date.split('-').map(Number); return y===currentYear&&m===currentMonth; });
+  const done=mj.filter(j=>j.done).length;
+  const counts={}; Object.keys(TYPE_LABELS).forEach(t=>counts[t]=mj.filter(j=>j.type===t).length);
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('summary').innerHTML=`
+    <div class="s-card"><div class="sl">今月の現場</div><div class="sv">${mj.length}<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
+    <div class="s-card"><div class="sl">完了</div><div class="sv" style="color:#16a34a">${done}<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
+    <div class="s-card"><div class="sl">未完了</div><div class="sv" style="color:#dc2626">${mj.length-done}<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
+    <div class="s-card"><div class="sl">最多種別</div><div class="sv" style="font-size:14px;margin-top:4px">${top&&top[1]>0?TYPE_LABELS[top[0]]:'—'}</div></div>`;
+}
+
+function renderCalendar(){
+  const body=document.getElementById('calBody'); body.innerHTML='';
+  const today=new Date(); today.setHours(0,0,0,0);
+  const first=new Date(currentYear,currentMonth-1,1);
+  const startDow=first.getDay(), totalDays=new Date(currentYear,currentMonth,0).getDate();
+  for(let i=0;i<startDow;i++) body.appendChild(makeCell(new Date(currentYear,currentMonth-1,-startDow+i+1),true));
+  for(let d=1;d<=totalDays;d++) body.appendChild(makeCell(new Date(currentYear,currentMonth-1,d),false));
+  const rem=42-(startDow+totalDays);
+  for(let i=1;i<=rem;i++) body.appendChild(makeCell(new Date(currentYear,currentMonth,i),true));
+}
+
+function makeCell(date,other){
+  const cell=document.createElement('div');
+  const dow=date.getDay();
+  cell.className='cal-cell'+(other?' other-month':'')+(dow===0?' sun':dow===6?' sat':'');
+  const today=new Date(); today.setHours(0,0,0,0);
+  if(date.getTime()===today.getTime()) cell.classList.add('today');
+  const ds=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  const dayJobs=jobs.filter(j=>j.date===ds).sort((a,b)=>a.time==='am'&&b.time==='pm'?-1:1);
+
+  const num=document.createElement('div'); num.className='date-num'; num.textContent=date.getDate(); cell.appendChild(num);
+  const wrap=document.createElement('div'); wrap.className='chips-wrap'; cell.appendChild(wrap);
+
+  const maxShow=3;
+  dayJobs.slice(0,maxShow).forEach(job=>{
+    const chip=document.createElement('div');
+    chip.className=`job-chip ${TYPE_CLASSES[job.type]}${job.done?' done':''}`;
+
+    // 現場名
+    const siteLine=document.createElement('div');
+    siteLine.className='chip-site';
+    siteLine.textContent=job.site;
+    chip.appendChild(siteLine);
+
+    // 午前/午後 + スタッフ名
+    const subLine=document.createElement('div');
+    subLine.className='chip-sub';
+    const timeSpan=document.createElement('span');
+    timeSpan.className='chip-time';
+    timeSpan.textContent=job.time==='am'?'午前':'午後';
+    subLine.appendChild(timeSpan);
+    const staffSpan=document.createElement('span');
+    staffSpan.className='chip-staff';
+    const names=(job.staffIds||[]).map(id=>staffName(id)).filter(Boolean);
+    staffSpan.textContent=names.join('・')||'未定';
+    subLine.appendChild(staffSpan);
+    chip.appendChild(subLine);
+
+    chip.title=`${job.site} [${job.time==='am'?'午前':'午後'}] ${names.join('・')||'未定'}`;
+    chip.onclick=e=>{e.stopPropagation();openDetail(job.id);};
+    wrap.appendChild(chip);
+  });
+  if(dayJobs.length>maxShow){
+    const m=document.createElement('div'); m.className='more-chip'; m.textContent=`+${dayJobs.length-maxShow}件`;
+    wrap.appendChild(m);
+  }
+  cell.onclick=()=>openAddModal(ds);
+  return cell;
+}
+
+/* ---- スタッフバー ---- */
+function toggleStaffBar(){ document.getElementById('staffBar').classList.toggle('open'); }
+
+function renderStaffChips(){
+  const c=document.getElementById('staffChips');
+  if(!staffs.length){ c.innerHTML='<span style="font-size:12px;color:#94a3b8">スタッフがいません</span>'; return; }
+  c.innerHTML=staffs.map((s,i)=>`
+    <div class="staff-chip">
+      <span class="s-av" style="background:${sColor(i)}">${s.name.charAt(0)}</span>
+      ${s.name}
+      <button class="staff-chip-del" onclick="deleteStaff(${s.id})">×</button>
+    </div>`).join('');
+}
+
+function addStaff(){
+  const inp=document.getElementById('newStaffName'), name=inp.value.trim();
+  if(!name) return;
+  if(staffs.find(s=>s.name===name)){alert('同じ名前のスタッフがいます');return;}
+  staffs.push({id:Date.now(),name}); inp.value=''; saveData(); renderStaffChips();
+}
+
+function deleteStaff(id){
+  if(!confirm('このスタッフを削除しますか？')) return;
+  staffs=staffs.filter(s=>s.id!==id);
+  jobs=jobs.map(j=>({...j,staffIds:(j.staffIds||[]).filter(sid=>sid!==id)}));
+  saveData(); render();
+}
+
+/* ---- 現場フォーム ---- */
+function renderStaffCheckList(selIds=[]){
+  const c=document.getElementById('staffCheckList');
+  if(!staffs.length){ c.innerHTML='<span style="font-size:12px;color:#94a3b8">先にスタッフを登録してください</span>'; return; }
+  c.innerHTML=staffs.map((s,i)=>`
+    <label class="sc-item">
+      <input type="checkbox" value="${s.id}" ${selIds.includes(s.id)?'checked':''}>
+      <span class="s-av" style="background:${sColor(i)}">${s.name.charAt(0)}</span>
+      <span class="sc-lbl">${s.name}</span>
+    </label>`).join('');
+}
+
+function getSelStaffIds(){ return Array.from(document.querySelectorAll('#staffCheckList input:checked')).map(el=>Number(el.value)); }
+
+function openAddModal(dateStr){
+  editingId=null;
+  document.getElementById('modalTitle').textContent='新規現場登録';
+  document.getElementById('f_site').value='';
+  document.getElementById('f_customer').value='';
+  document.getElementById('f_date').value=dateStr||'';
+  document.getElementById('ts_am').checked=true;
+  document.getElementById('f_type').value='aircon';
+  document.getElementById('f_memo').value='';
+  renderStaffCheckList([]);
+  document.getElementById('editModal').classList.add('show');
+}
+
+function openEditFromDetail(){
+  closeModal('detailModal');
+  const job=jobs.find(j=>j.id===viewingId); if(!job) return;
+  editingId=job.id;
+  document.getElementById('modalTitle').textContent='現場を編集';
+  document.getElementById('f_site').value=job.site||'';
+  document.getElementById('f_customer').value=job.customer||'';
+  document.getElementById('f_date').value=job.date;
+  document.querySelector(`input[name=ts][value=${job.time||'am'}]`).checked=true;
+  document.getElementById('f_type').value=job.type;
+  document.getElementById('f_memo').value=job.memo||'';
+  renderStaffCheckList(job.staffIds||[]);
+  document.getElementById('editModal').classList.add('show');
+}
+
+function saveJob(){
+  const site=document.getElementById('f_site').value.trim();
+  const date=document.getElementById('f_date').value;
+  if(!site||!date){alert('現場名と作業日は必須です');return;}
+  const job={
+    id:editingId||Date.now(),
+    site,
+    customer:document.getElementById('f_customer').value.trim(),
+    date,
+    time:document.querySelector('input[name=ts]:checked').value,
+    type:document.getElementById('f_type').value,
+    staffIds:getSelStaffIds(),
+    memo:document.getElementById('f_memo').value.trim(),
+    done:editingId?(jobs.find(j=>j.id===editingId)||{}).done||false:false,
+  };
+  if(editingId) jobs=jobs.map(j=>j.id===editingId?job:j); else jobs.push(job);
+  saveData(); closeModal('editModal'); render();
+}
+
+/* ---- 詳細 ---- */
+function openDetail(id){
+  const job=jobs.find(j=>j.id===id); if(!job) return;
+  viewingId=id;
+  document.getElementById('d_title').textContent=job.site;
+  document.getElementById('d_badge').innerHTML=`<span class="type-badge ${TYPE_CLASSES[job.type]}">${TYPE_LABELS[job.type]}</span>`;
+  document.getElementById('d_site').textContent=job.site;
+  document.getElementById('d_customer').textContent=job.customer||'—';
+  document.getElementById('d_date').textContent=job.date;
+  document.getElementById('d_time').textContent=job.time==='am'?'☀️ 午前':'🌇 午後';
+  const ids=job.staffIds||[];
+  document.getElementById('d_staff').innerHTML=ids.length
+    ?ids.map(id=>{const s=staffs.find(s=>s.id===id);return s?`<span class="staff-tag">${s.name}</span>`:''}).join('')
+    :'<span style="color:#94a3b8">未定</span>';
+  document.getElementById('d_memo').textContent=job.memo||'—';
+  const btn=document.getElementById('doneToggle');
+  btn.textContent=job.done?'✅ 完了済み（クリックで戻す）':'完了にする ✓';
+  btn.className='done-toggle'+(job.done?' done':'');
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function toggleDone(){
+  const job=jobs.find(j=>j.id===viewingId); if(!job) return;
+  job.done=!job.done; saveData(); openDetail(viewingId); render();
+}
+
+function deleteJob(){
+  if(!confirm('この現場を削除しますか？')) return;
+  jobs=jobs.filter(j=>j.id!==viewingId); saveData(); closeModal('detailModal'); render();
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function changeMonth(d){ currentMonth+=d; if(currentMonth>12){currentMonth=1;currentYear++;} if(currentMonth<1){currentMonth=12;currentYear--;} render(); }
+function goToday(){ const t=new Date(); currentYear=t.getFullYear(); currentMonth=t.getMonth()+1; render(); }
+
+document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('show');}));
+
+/* ---- iPad用エクスポート ---- */
+function exportToFile(){
+  // 現在のHTMLソースを取得
+  const originalHtml = document.documentElement.outerHTML;
+
+  // データをJSON文字列に
+  const jobsJson  = JSON.stringify(jobs).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
+  const staffsJson = JSON.stringify(staffs).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
+
+  // init()の直前にデータ埋め込みスクリプトを注入
+  const injection = `<script>
+  // ===== エクスポートされたデータ =====
+  (function(){
+    try {
+      localStorage.setItem('hc5_jobs',   '${jobsJson.replace(/'/g,"\\'")}');
+      localStorage.setItem('hc5_staffs', '${staffsJson.replace(/'/g,"\\'")}');
+    } catch(e){}
+  })();
+  // ===================================
+  <\/script>`;
+
+  // <script>
+  // ===== エクスポートされたデータ =====
+  (function(){
+    try {
+      localStorage.setItem('hc5_jobs',   '[{"site":"ワーキングガール","customer":"","date":"2026-06-01","time":"am","type":"house","staffIds":[101,104],"memo":"9:00〜2人","id":2000,"done":false},{"site":"みどりのアパート草取り","customer":"","date":"2026-06-01","time":"am","type":"weed","staffIds":[102,103],"memo":"2人","id":2001,"done":false},{"site":"土浦市神立町戸建","customer":"","date":"2026-06-01","time":"am","type":"house","staffIds":[],"memo":"3人 外注:リファイン3","id":2002,"done":false},{"site":"渡辺住建","customer":"","date":"2026-06-01","time":"am","type":"other","staffIds":[109],"memo":"9:00〜1人","id":2003,"done":false},{"site":"JAホール龍ヶ崎","customer":"","date":"2026-06-02","time":"am","type":"house","staffIds":[102,104],"memo":"8:30〜2人 外注:K-BOX","id":2004,"done":false},{"site":"ベイクン","customer":"","date":"2026-06-03","time":"am","type":"other","staffIds":[101,105],"memo":"9:00〜1人 外注:植研","id":2005,"done":false},{"site":"たのうえ動物病院","customer":"","date":"2026-06-04","time":"am","type":"house","staffIds":[101],"memo":"9:00〜1人","id":2006,"done":false},{"site":"新石下賃貸住宅","customer":"","date":"2026-06-04","time":"am","type":"house","staffIds":[102,104],"memo":"3人 外注:リファイン","id":2007,"done":false},{"site":"タキロン","customer":"","date":"2026-06-05","time":"am","type":"common","staffIds":[102,104],"memo":"8:30〜 外注:パス・ナカケン・鉄板","id":2008,"done":false},{"site":"チェスト・トーエネック","customer":"","date":"2026-06-05","time":"am","type":"common","staffIds":[101],"memo":"","id":2009,"done":false},{"site":"オルガノ","customer":"","date":"2026-06-06","time":"am","type":"house","staffIds":[101,102,103,104,105,106,107],"memo":"8:30〜7人","id":2010,"done":false},{"site":"関東ビル","customer":"","date":"2026-06-07","time":"am","type":"aircon","staffIds":[102,104],"memo":"天カセAC3台","id":2011,"done":false},{"site":"日信ビル","customer":"","date":"2026-06-08","time":"am","type":"house","staffIds":[101,103],"memo":"9:00〜3F〜14F 外注:リファイン","id":2012,"done":false},{"site":"こうの歯科","customer":"","date":"2026-06-08","time":"am","type":"house","staffIds":[102,103],"memo":"9:00〜3人 外注:リファイン3","id":2013,"done":false},{"site":"日信ビル","customer":"","date":"2026-06-09","time":"am","type":"house","staffIds":[103],"memo":"外注:リファイン","id":2014,"done":false},{"site":"日信ビル","customer":"","date":"2026-06-09","time":"pm","type":"house","staffIds":[102,103,104],"memo":"外注:リファイン","id":2015,"done":false},{"site":"日信ビル","customer":"","date":"2026-06-10","time":"am","type":"house","staffIds":[101,103,104],"memo":"9:00〜3F〜14F","id":2016,"done":false},{"site":"つじ耳鼻咽喉科","customer":"","date":"2026-06-11","time":"am","type":"house","staffIds":[103,102],"memo":"8:30〜3人 外注:リファイン","id":2017,"done":false},{"site":"ナカケン・パス・鉄板","customer":"","date":"2026-06-12","time":"am","type":"common","staffIds":[104],"memo":"","id":2018,"done":false},{"site":"害虫","customer":"","date":"2026-06-13","time":"am","type":"other","staffIds":[102],"memo":"","id":2019,"done":false},{"site":"佐藤様邸","customer":"佐藤","date":"2026-06-14","time":"am","type":"house","staffIds":[101,102,103],"memo":"8:30〜5人 外注:リファイン2","id":2020,"done":false},{"site":"東京大学柏キャンパス","customer":"東京大学","date":"2026-06-15","time":"am","type":"house","staffIds":[101,102,103],"memo":"9:00〜3人","id":2021,"done":false},{"site":"鳥のじ","customer":"","date":"2026-06-16","time":"am","type":"house","staffIds":[101],"memo":"9:00〜2人 外注:リファイン","id":2022,"done":false},{"site":"フラットフォレスト草取り","customer":"","date":"2026-06-16","time":"pm","type":"weed","staffIds":[103,104],"memo":"","id":2023,"done":false},{"site":"くりの木歯科","customer":"","date":"2026-06-17","time":"am","type":"house","staffIds":[],"memo":"","id":2024,"done":false},{"site":"千葉マリンこどもクリニック","customer":"","date":"2026-06-17","time":"am","type":"house","staffIds":[],"memo":"9:00〜2人","id":2025,"done":false},{"site":"あべ整形外科","customer":"","date":"2026-06-17","time":"pm","type":"house","staffIds":[],"memo":"13:00〜2人","id":2026,"done":false},{"site":"ゆめみ野クリニック","customer":"","date":"2026-06-18","time":"am","type":"house","staffIds":[101,103],"memo":"8:30〜2人","id":2027,"done":false},{"site":"古川邸","customer":"古川","date":"2026-06-18","time":"am","type":"aircon","staffIds":[103,104],"memo":"HKホーム 9:00〜AC2台","id":2028,"done":false},{"site":"アルゾーニ","customer":"","date":"2026-06-18","time":"pm","type":"house","staffIds":[103,104],"memo":"サニ 13:30〜2人","id":2029,"done":false},{"site":"みらい平クリニック","customer":"","date":"2026-06-19","time":"am","type":"house","staffIds":[102,103],"memo":"9:00〜3人","id":2030,"done":false},{"site":"タキロン定期","customer":"","date":"2026-06-19","time":"am","type":"common","staffIds":[103,104],"memo":"外注:リファイン・ナカケン・ナガイ","id":2031,"done":false},{"site":"積水ハウス5・6F","customer":"積水ハウス","date":"2026-06-20","time":"am","type":"house","staffIds":[102,103,104,108],"memo":"9:00〜4人","id":2032,"done":false},{"site":"大久保歯科医院","customer":"","date":"2026-06-21","time":"am","type":"house","staffIds":[101,102,103,104,107],"memo":"9:00〜4人","id":2033,"done":false},{"site":"清六家下妻店","customer":"","date":"2026-06-21","time":"pm","type":"house","staffIds":[101,102,103],"memo":"","id":2034,"done":false},{"site":"古河中エアコン","customer":"","date":"2026-06-22","time":"am","type":"aircon","staffIds":[101,105,106],"memo":"広瀬 9:00〜 外注:リファイン","id":2035,"done":false},{"site":"スマイルサポート","customer":"","date":"2026-06-22","time":"am","type":"house","staffIds":[103],"memo":"Tic 9:00〜3人 外注:リファイン2","id":2036,"done":false},{"site":"みらい平クリニック 残りガラス","customer":"","date":"2026-06-22","time":"pm","type":"house","staffIds":[102,104],"memo":"","id":2037,"done":false},{"site":"古河一高","customer":"","date":"2026-06-23","time":"am","type":"aircon","staffIds":[101,103],"memo":"9:00〜天カセAC4台","id":2038,"done":false},{"site":"深澤歯科","customer":"","date":"2026-06-24","time":"am","type":"house","staffIds":[101,104],"memo":"9:00〜2人","id":2039,"done":false},{"site":"政翔不動産","customer":"","date":"2026-06-24","time":"pm","type":"house","staffIds":[101,104],"memo":"事務所2人","id":2040,"done":false},{"site":"清六家結城店","customer":"","date":"2026-06-24","time":"am","type":"house","staffIds":[101,102,103],"memo":"","id":2041,"done":false},{"site":"なるしま内科","customer":"","date":"2026-06-25","time":"am","type":"aircon","staffIds":[102,103,104],"memo":"9:00〜AC7台","id":2042,"done":false},{"site":"マガーリ","customer":"","date":"2026-06-25","time":"am","type":"house","staffIds":[102,104],"memo":"9:00〜2人","id":2043,"done":false},{"site":"坂本医院","customer":"","date":"2026-06-26","time":"am","type":"house","staffIds":[105,102],"memo":"","id":2044,"done":false},{"site":"チェスト・トーエネック・ノーバル","customer":"","date":"2026-06-26","time":"am","type":"common","staffIds":[101],"memo":"","id":2045,"done":false},{"site":"日信第二ビル・サンライズビル","customer":"","date":"2026-06-26","time":"pm","type":"house","staffIds":[102],"memo":"","id":2046,"done":false},{"site":"かわごえ皮膚科","customer":"","date":"2026-06-27","time":"am","type":"house","staffIds":[],"memo":"9:30〜2人","id":2047,"done":false},{"site":"木村邸","customer":"木村","date":"2026-06-27","time":"pm","type":"aircon","staffIds":[101],"memo":"HKホーム 13:30〜AC2台 外注:リファイン","id":2048,"done":false},{"site":"藤代紫水","customer":"","date":"2026-06-27","time":"pm","type":"house","staffIds":[],"memo":"外注:リファイン2","id":2049,"done":false},{"site":"埠頭","customer":"","date":"2026-06-28","time":"am","type":"house","staffIds":[102,103,107],"memo":"","id":2050,"done":false},{"site":"チェスト・トーエネック・ノーバル","customer":"","date":"2026-06-28","time":"am","type":"common","staffIds":[101],"memo":"外注:ナガイ","id":2051,"done":false},{"site":"スカイクリーン","customer":"","date":"2026-06-29","time":"am","type":"house","staffIds":[101,102],"memo":"サニ 9:00〜4人 外注:リファイン2","id":2052,"done":false},{"site":"石下保育園","customer":"","date":"2026-06-29","time":"am","type":"aircon","staffIds":[103],"memo":"9:00〜天吊り4台 外注:リファイン","id":2053,"done":false},{"site":"赤荻邸","customer":"赤荻","date":"2026-06-29","time":"am","type":"aircon","staffIds":[102],"memo":"9:00〜AC1台","id":2054,"done":false},{"site":"サンユウテック","customer":"","date":"2026-06-29","time":"pm","type":"house","staffIds":[101,104],"memo":"9:00〜3人","id":2055,"done":false}]');
+      localStorage.setItem('hc5_staffs', '[{"id":101,"name":"鈴木"},{"id":102,"name":"糸賀"},{"id":103,"name":"塚本"},{"id":104,"name":"天ヶ谷"},{"id":105,"name":"会長"},{"id":106,"name":"待子"},{"id":107,"name":"片山"},{"id":108,"name":"逆井"},{"id":109,"name":"社長"}]');
+    } catch(e){}
+  })();
+  // ===================================
+  </script></body>の直前に注入
+  const exportHtml = originalHtml.replace('</body>', injection + '</body>');
+
+  // ダウンロード
+  const blob = new Blob([exportHtml], {type:'text/html;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const now  = new Date();
+  const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  a.href     = url;
+  a.download = `現場管理システム_${dateStr}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+init();
+</script>
+
+
+</body></html>
