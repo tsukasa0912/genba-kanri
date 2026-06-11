@@ -1,4 +1,6 @@
-<html lang="ja"><head>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>現場管理システム</title>
@@ -140,66 +142,20 @@
   <div class="topbar-main">
     <div class="logo"><span class="logo-icon">🧹</span><span class="logo-text">現場管理システム</span></div>
     <div class="topbar-center">
-      <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
-      <div class="nav-title" id="navTitle">2026年 6月</div>
-      <button class="nav-btn" onclick="changeMonth(1)">›</button>
+      <button class="nav-btn" onclick="changeMonth(-1)">&#8249;</button>
+      <div class="nav-title" id="navTitle"></div>
+      <button class="nav-btn" onclick="changeMonth(1)">&#8250;</button>
     </div>
     <div class="topbar-right">
       <button class="btn btn-ghost" onclick="goToday()">今月</button>
       <button class="btn btn-ghost" onclick="toggleStaffBar()">👷 スタッフ管理</button>
-      <button class="btn btn-ghost" onclick="exportToFile()" title="データ込みのHTMLをダウンロード">📤 iPad用に書き出す</button>
       <button class="btn btn-success" onclick="openAddModal()">＋ 新規登録</button>
     </div>
   </div>
   <div class="staff-bar" id="staffBar">
     <div class="staff-bar-inner">
       <span class="staff-bar-label">スタッフ</span>
-      <div class="staff-chips" id="staffChips">
-    <div class="staff-chip">
-      <span class="s-av" style="background:#3b82f6">鈴</span>
-      鈴木
-      <button class="staff-chip-del" onclick="deleteStaff(101)">×</button>
-    </div>
-    <div class="staff-chip">
-      <span class="s-av" style="background:#06b6d4">糸</span>
-      糸賀
-      <button class="staff-chip-del" onclick="deleteStaff(102)">×</button>
-    </div>
-    <div class="staff-chip">
-      <span class="s-av" style="background:#f59e0b">塚</span>
-      塚本
-      <button class="staff-chip-del" onclick="deleteStaff(103)">×</button>
-    </div>
-    <div class="staff-chip">
-      <span class="s-av" style="background:#8b5cf6">天</span>
-      天ヶ谷
-      <button class="staff-chip-del" onclick="deleteStaff(104)">×</button>
-    </div>
-    <div class="staff-chip">
-      <span class="s-av" style="background:#ef4444">会</span>
-      会長
-      <button class="staff-chip-del" onclick="deleteStaff(105)">×</button>
-    </div>
-    <div class="staff-chip">
-      <span class="s-av" style="background:#22c55e">待</span>
-      待子
-      <button class="staff-chip-del" onclick="deleteStaff(106)">×</button>
-    </div>
-    <div class="staff-chip">
-      <span class="s-av" style="background:#ec4899">片</span>
-      片山
-      <button class="staff-chip-del" onclick="deleteStaff(107)">×</button>
-    </div>
-    <div class="staff-chip">
-      <span class="s-av" style="background:#0ea5e9">逆</span>
-      逆井
-      <button class="staff-chip-del" onclick="deleteStaff(108)">×</button>
-    </div>
-    <div class="staff-chip">
-      <span class="s-av" style="background:#14b8a6">社</span>
-      社長
-      <button class="staff-chip-del" onclick="deleteStaff(109)">×</button>
-    </div></div>
+      <div class="staff-chips" id="staffChips"></div>
       <div class="staff-add-inline">
         <input type="text" id="newStaffName" placeholder="名前を入力" onkeydown="if(event.key==='Enter')addStaff()">
         <button onclick="addStaff()">追加</button>
@@ -208,11 +164,7 @@
   </div>
 </div>
 
-<div class="summary-bar" id="summary">
-    <div class="s-card"><div class="sl">今月の現場</div><div class="sv">56<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
-    <div class="s-card"><div class="sl">完了</div><div class="sv" style="color:#16a34a">0<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
-    <div class="s-card"><div class="sl">未完了</div><div class="sv" style="color:#dc2626">56<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
-    <div class="s-card"><div class="sl">最多種別</div><div class="sv" style="font-size:14px;margin-top:4px">ハウスクリーニング</div></div></div>
+<div class="summary-bar" id="summary"></div>
 
 <div class="legend">
   <span class="legend-label">種別</span>
@@ -231,7 +183,7 @@
       <div class="cal-head-cell">水</div><div class="cal-head-cell">木</div><div class="cal-head-cell">金</div>
       <div class="cal-head-cell">土</div>
     </div>
-    <div class="cal-body" id="calBody"><div class="cal-cell other-month sun"><div class="date-num">31</div><div class="chips-wrap"></div></div><div class="cal-cell"><div class="date-num">1</div><div class="chips-wrap"><div class="job-chip type-house" title="ワーキングガール [午前] 鈴木・天ヶ谷"><div class="chip-site">ワーキングガール</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・天ヶ谷</span></div></div><div class="job-chip type-weed" title="みどりのアパート草取り [午前] 糸賀・塚本"><div class="chip-site">みどりのアパート草取り</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本</span></div></div><div class="job-chip type-house" title="土浦市神立町戸建 [午前] 未定"><div class="chip-site">土浦市神立町戸建</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">未定</span></div></div><div class="more-chip">+1件</div></div></div><div class="cal-cell"><div class="date-num">2</div><div class="chips-wrap"><div class="job-chip type-house" title="JAホール龍ヶ崎 [午前] 糸賀・天ヶ谷"><div class="chip-site">JAホール龍ヶ崎</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">3</div><div class="chips-wrap"><div class="job-chip type-other" title="ベイクン [午前] 鈴木・会長"><div class="chip-site">ベイクン</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・会長</span></div></div></div></div><div class="cal-cell"><div class="date-num">4</div><div class="chips-wrap"><div class="job-chip type-house" title="たのうえ動物病院 [午前] 鈴木"><div class="chip-site">たのうえ動物病院</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div><div class="job-chip type-house" title="新石下賃貸住宅 [午前] 糸賀・天ヶ谷"><div class="chip-site">新石下賃貸住宅</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">5</div><div class="chips-wrap"><div class="job-chip type-common" title="タキロン [午前] 糸賀・天ヶ谷"><div class="chip-site">タキロン</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div><div class="job-chip type-common" title="チェスト・トーエネック [午前] 鈴木"><div class="chip-site">チェスト・トーエネック</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div></div></div><div class="cal-cell sat"><div class="date-num">6</div><div class="chips-wrap"><div class="job-chip type-house" title="オルガノ [午前] 鈴木・糸賀・塚本・天ヶ谷・会長・待子・片山"><div class="chip-site">オルガノ</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本・天ヶ谷・会長・待子・片山</span></div></div></div></div><div class="cal-cell sun"><div class="date-num">7</div><div class="chips-wrap"><div class="job-chip type-aircon" title="関東ビル [午前] 糸賀・天ヶ谷"><div class="chip-site">関東ビル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">8</div><div class="chips-wrap"><div class="job-chip type-house" title="日信ビル [午前] 鈴木・塚本"><div class="chip-site">日信ビル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・塚本</span></div></div><div class="job-chip type-house" title="こうの歯科 [午前] 糸賀・塚本"><div class="chip-site">こうの歯科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本</span></div></div></div></div><div class="cal-cell today"><div class="date-num">9</div><div class="chips-wrap"><div class="job-chip type-house" title="日信ビル [午前] 塚本"><div class="chip-site">日信ビル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本</span></div></div><div class="job-chip type-house" title="日信ビル [午後] 糸賀・塚本・天ヶ谷"><div class="chip-site">日信ビル</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">糸賀・塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">10</div><div class="chips-wrap"><div class="job-chip type-house" title="日信ビル [午前] 鈴木・塚本・天ヶ谷"><div class="chip-site">日信ビル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">11</div><div class="chips-wrap"><div class="job-chip type-house" title="つじ耳鼻咽喉科 [午前] 塚本・糸賀"><div class="chip-site">つじ耳鼻咽喉科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本・糸賀</span></div></div></div></div><div class="cal-cell"><div class="date-num">12</div><div class="chips-wrap"><div class="job-chip type-common" title="ナカケン・パス・鉄板 [午前] 天ヶ谷"><div class="chip-site">ナカケン・パス・鉄板</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">天ヶ谷</span></div></div></div></div><div class="cal-cell sat"><div class="date-num">13</div><div class="chips-wrap"><div class="job-chip type-other" title="害虫 [午前] 糸賀"><div class="chip-site">害虫</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀</span></div></div></div></div><div class="cal-cell sun"><div class="date-num">14</div><div class="chips-wrap"><div class="job-chip type-house" title="佐藤様邸 [午前] 鈴木・糸賀・塚本"><div class="chip-site">佐藤様邸</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本</span></div></div></div></div><div class="cal-cell"><div class="date-num">15</div><div class="chips-wrap"><div class="job-chip type-house" title="東京大学柏キャンパス [午前] 鈴木・糸賀・塚本"><div class="chip-site">東京大学柏キャンパス</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本</span></div></div></div></div><div class="cal-cell"><div class="date-num">16</div><div class="chips-wrap"><div class="job-chip type-house" title="鳥のじ [午前] 鈴木"><div class="chip-site">鳥のじ</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div><div class="job-chip type-weed" title="フラットフォレスト草取り [午後] 塚本・天ヶ谷"><div class="chip-site">フラットフォレスト草取り</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">17</div><div class="chips-wrap"><div class="job-chip type-house" title="くりの木歯科 [午前] 未定"><div class="chip-site">くりの木歯科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">未定</span></div></div><div class="job-chip type-house" title="千葉マリンこどもクリニック [午前] 未定"><div class="chip-site">千葉マリンこどもクリニック</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">未定</span></div></div><div class="job-chip type-house" title="あべ整形外科 [午後] 未定"><div class="chip-site">あべ整形外科</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">未定</span></div></div></div></div><div class="cal-cell"><div class="date-num">18</div><div class="chips-wrap"><div class="job-chip type-house" title="ゆめみ野クリニック [午前] 鈴木・塚本"><div class="chip-site">ゆめみ野クリニック</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・塚本</span></div></div><div class="job-chip type-aircon" title="古川邸 [午前] 塚本・天ヶ谷"><div class="chip-site">古川邸</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本・天ヶ谷</span></div></div><div class="job-chip type-house" title="アルゾーニ [午後] 塚本・天ヶ谷"><div class="chip-site">アルゾーニ</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">19</div><div class="chips-wrap"><div class="job-chip type-house" title="みらい平クリニック [午前] 糸賀・塚本"><div class="chip-site">みらい平クリニック</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本</span></div></div><div class="job-chip type-common" title="タキロン定期 [午前] 塚本・天ヶ谷"><div class="chip-site">タキロン定期</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本・天ヶ谷</span></div></div></div></div><div class="cal-cell sat"><div class="date-num">20</div><div class="chips-wrap"><div class="job-chip type-house" title="積水ハウス5・6F [午前] 糸賀・塚本・天ヶ谷・逆井"><div class="chip-site">積水ハウス5・6F</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本・天ヶ谷・逆井</span></div></div></div></div><div class="cal-cell sun"><div class="date-num">21</div><div class="chips-wrap"><div class="job-chip type-house" title="大久保歯科医院 [午前] 鈴木・糸賀・塚本・天ヶ谷・片山"><div class="chip-site">大久保歯科医院</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本・天ヶ谷・片山</span></div></div><div class="job-chip type-house" title="清六家下妻店 [午後] 鈴木・糸賀・塚本"><div class="chip-site">清六家下妻店</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">鈴木・糸賀・塚本</span></div></div></div></div><div class="cal-cell"><div class="date-num">22</div><div class="chips-wrap"><div class="job-chip type-aircon" title="古河中エアコン [午前] 鈴木・会長・待子"><div class="chip-site">古河中エアコン</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・会長・待子</span></div></div><div class="job-chip type-house" title="スマイルサポート [午前] 塚本"><div class="chip-site">スマイルサポート</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本</span></div></div><div class="job-chip type-house" title="みらい平クリニック 残りガラス [午後] 糸賀・天ヶ谷"><div class="chip-site">みらい平クリニック 残りガラス</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">23</div><div class="chips-wrap"><div class="job-chip type-aircon" title="古河一高 [午前] 鈴木・塚本"><div class="chip-site">古河一高</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・塚本</span></div></div></div></div><div class="cal-cell"><div class="date-num">24</div><div class="chips-wrap"><div class="job-chip type-house" title="深澤歯科 [午前] 鈴木・天ヶ谷"><div class="chip-site">深澤歯科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・天ヶ谷</span></div></div><div class="job-chip type-house" title="清六家結城店 [午前] 鈴木・糸賀・塚本"><div class="chip-site">清六家結城店</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀・塚本</span></div></div><div class="job-chip type-house" title="政翔不動産 [午後] 鈴木・天ヶ谷"><div class="chip-site">政翔不動産</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">鈴木・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">25</div><div class="chips-wrap"><div class="job-chip type-aircon" title="なるしま内科 [午前] 糸賀・塚本・天ヶ谷"><div class="chip-site">なるしま内科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本・天ヶ谷</span></div></div><div class="job-chip type-house" title="マガーリ [午前] 糸賀・天ヶ谷"><div class="chip-site">マガーリ</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・天ヶ谷</span></div></div></div></div><div class="cal-cell"><div class="date-num">26</div><div class="chips-wrap"><div class="job-chip type-house" title="坂本医院 [午前] 会長・糸賀"><div class="chip-site">坂本医院</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">会長・糸賀</span></div></div><div class="job-chip type-common" title="チェスト・トーエネック・ノーバル [午前] 鈴木"><div class="chip-site">チェスト・トーエネック・ノーバル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div><div class="job-chip type-house" title="日信第二ビル・サンライズビル [午後] 糸賀"><div class="chip-site">日信第二ビル・サンライズビル</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">糸賀</span></div></div></div></div><div class="cal-cell sat"><div class="date-num">27</div><div class="chips-wrap"><div class="job-chip type-house" title="かわごえ皮膚科 [午前] 未定"><div class="chip-site">かわごえ皮膚科</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">未定</span></div></div><div class="job-chip type-aircon" title="木村邸 [午後] 鈴木"><div class="chip-site">木村邸</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">鈴木</span></div></div><div class="job-chip type-house" title="藤代紫水 [午後] 未定"><div class="chip-site">藤代紫水</div><div class="chip-sub"><span class="chip-time">午後</span><span class="chip-staff">未定</span></div></div></div></div><div class="cal-cell sun"><div class="date-num">28</div><div class="chips-wrap"><div class="job-chip type-house" title="埠頭 [午前] 糸賀・塚本・片山"><div class="chip-site">埠頭</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀・塚本・片山</span></div></div><div class="job-chip type-common" title="チェスト・トーエネック・ノーバル [午前] 鈴木"><div class="chip-site">チェスト・トーエネック・ノーバル</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木</span></div></div></div></div><div class="cal-cell"><div class="date-num">29</div><div class="chips-wrap"><div class="job-chip type-house" title="スカイクリーン [午前] 鈴木・糸賀"><div class="chip-site">スカイクリーン</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">鈴木・糸賀</span></div></div><div class="job-chip type-aircon" title="石下保育園 [午前] 塚本"><div class="chip-site">石下保育園</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">塚本</span></div></div><div class="job-chip type-aircon" title="赤荻邸 [午前] 糸賀"><div class="chip-site">赤荻邸</div><div class="chip-sub"><span class="chip-time">午前</span><span class="chip-staff">糸賀</span></div></div><div class="more-chip">+1件</div></div></div><div class="cal-cell"><div class="date-num">30</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">1</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">2</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">3</div><div class="chips-wrap"></div></div><div class="cal-cell other-month sat"><div class="date-num">4</div><div class="chips-wrap"></div></div><div class="cal-cell other-month sun"><div class="date-num">5</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">6</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">7</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">8</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">9</div><div class="chips-wrap"></div></div><div class="cal-cell other-month"><div class="date-num">10</div><div class="chips-wrap"></div></div><div class="cal-cell other-month sat"><div class="date-num">11</div><div class="chips-wrap"></div></div></div>
+    <div class="cal-body" id="calBody"></div>
   </div>
 </div>
 
@@ -249,7 +201,7 @@
       <div class="form-section">
         <label>時間帯</label>
         <div class="seg">
-          <input type="radio" name="ts" id="ts_am" value="am" checked=""><label for="ts_am">☀️ 午前</label>
+          <input type="radio" name="ts" id="ts_am" value="am" checked><label for="ts_am">☀️ 午前</label>
           <input type="radio" name="ts" id="ts_pm" value="pm"><label for="ts_pm">🌇 午後</label>
         </div>
       </div>
@@ -635,53 +587,7 @@ function goToday(){ const t=new Date(); currentYear=t.getFullYear(); currentMont
 
 document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('show');}));
 
-/* ---- iPad用エクスポート ---- */
-function exportToFile(){
-  // 現在のHTMLソースを取得
-  const originalHtml = document.documentElement.outerHTML;
-
-  // データをJSON文字列に
-  const jobsJson  = JSON.stringify(jobs).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
-  const staffsJson = JSON.stringify(staffs).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
-
-  // init()の直前にデータ埋め込みスクリプトを注入
-  const injection = `<script>
-  // ===== エクスポートされたデータ =====
-  (function(){
-    try {
-      localStorage.setItem('hc5_jobs',   '${jobsJson.replace(/'/g,"\\'")}');
-      localStorage.setItem('hc5_staffs', '${staffsJson.replace(/'/g,"\\'")}');
-    } catch(e){}
-  })();
-  // ===================================
-  <\/script>`;
-
-  // <script>
-  // ===== エクスポートされたデータ =====
-  (function(){
-    try {
-      localStorage.setItem('hc5_jobs',   '[{"site":"ワーキングガール","customer":"","date":"2026-06-01","time":"am","type":"house","staffIds":[101,104],"memo":"9:00〜2人","id":2000,"done":false},{"site":"みどりのアパート草取り","customer":"","date":"2026-06-01","time":"am","type":"weed","staffIds":[102,103],"memo":"2人","id":2001,"done":false},{"site":"土浦市神立町戸建","customer":"","date":"2026-06-01","time":"am","type":"house","staffIds":[],"memo":"3人 外注:リファイン3","id":2002,"done":false},{"site":"渡辺住建","customer":"","date":"2026-06-01","time":"am","type":"other","staffIds":[109],"memo":"9:00〜1人","id":2003,"done":false},{"site":"JAホール龍ヶ崎","customer":"","date":"2026-06-02","time":"am","type":"house","staffIds":[102,104],"memo":"8:30〜2人 外注:K-BOX","id":2004,"done":false},{"site":"ベイクン","customer":"","date":"2026-06-03","time":"am","type":"other","staffIds":[101,105],"memo":"9:00〜1人 外注:植研","id":2005,"done":false},{"site":"たのうえ動物病院","customer":"","date":"2026-06-04","time":"am","type":"house","staffIds":[101],"memo":"9:00〜1人","id":2006,"done":false},{"site":"新石下賃貸住宅","customer":"","date":"2026-06-04","time":"am","type":"house","staffIds":[102,104],"memo":"3人 外注:リファイン","id":2007,"done":false},{"site":"タキロン","customer":"","date":"2026-06-05","time":"am","type":"common","staffIds":[102,104],"memo":"8:30〜 外注:パス・ナカケン・鉄板","id":2008,"done":false},{"site":"チェスト・トーエネック","customer":"","date":"2026-06-05","time":"am","type":"common","staffIds":[101],"memo":"","id":2009,"done":false},{"site":"オルガノ","customer":"","date":"2026-06-06","time":"am","type":"house","staffIds":[101,102,103,104,105,106,107],"memo":"8:30〜7人","id":2010,"done":false},{"site":"関東ビル","customer":"","date":"2026-06-07","time":"am","type":"aircon","staffIds":[102,104],"memo":"天カセAC3台","id":2011,"done":false},{"site":"日信ビル","customer":"","date":"2026-06-08","time":"am","type":"house","staffIds":[101,103],"memo":"9:00〜3F〜14F 外注:リファイン","id":2012,"done":false},{"site":"こうの歯科","customer":"","date":"2026-06-08","time":"am","type":"house","staffIds":[102,103],"memo":"9:00〜3人 外注:リファイン3","id":2013,"done":false},{"site":"日信ビル","customer":"","date":"2026-06-09","time":"am","type":"house","staffIds":[103],"memo":"外注:リファイン","id":2014,"done":false},{"site":"日信ビル","customer":"","date":"2026-06-09","time":"pm","type":"house","staffIds":[102,103,104],"memo":"外注:リファイン","id":2015,"done":false},{"site":"日信ビル","customer":"","date":"2026-06-10","time":"am","type":"house","staffIds":[101,103,104],"memo":"9:00〜3F〜14F","id":2016,"done":false},{"site":"つじ耳鼻咽喉科","customer":"","date":"2026-06-11","time":"am","type":"house","staffIds":[103,102],"memo":"8:30〜3人 外注:リファイン","id":2017,"done":false},{"site":"ナカケン・パス・鉄板","customer":"","date":"2026-06-12","time":"am","type":"common","staffIds":[104],"memo":"","id":2018,"done":false},{"site":"害虫","customer":"","date":"2026-06-13","time":"am","type":"other","staffIds":[102],"memo":"","id":2019,"done":false},{"site":"佐藤様邸","customer":"佐藤","date":"2026-06-14","time":"am","type":"house","staffIds":[101,102,103],"memo":"8:30〜5人 外注:リファイン2","id":2020,"done":false},{"site":"東京大学柏キャンパス","customer":"東京大学","date":"2026-06-15","time":"am","type":"house","staffIds":[101,102,103],"memo":"9:00〜3人","id":2021,"done":false},{"site":"鳥のじ","customer":"","date":"2026-06-16","time":"am","type":"house","staffIds":[101],"memo":"9:00〜2人 外注:リファイン","id":2022,"done":false},{"site":"フラットフォレスト草取り","customer":"","date":"2026-06-16","time":"pm","type":"weed","staffIds":[103,104],"memo":"","id":2023,"done":false},{"site":"くりの木歯科","customer":"","date":"2026-06-17","time":"am","type":"house","staffIds":[],"memo":"","id":2024,"done":false},{"site":"千葉マリンこどもクリニック","customer":"","date":"2026-06-17","time":"am","type":"house","staffIds":[],"memo":"9:00〜2人","id":2025,"done":false},{"site":"あべ整形外科","customer":"","date":"2026-06-17","time":"pm","type":"house","staffIds":[],"memo":"13:00〜2人","id":2026,"done":false},{"site":"ゆめみ野クリニック","customer":"","date":"2026-06-18","time":"am","type":"house","staffIds":[101,103],"memo":"8:30〜2人","id":2027,"done":false},{"site":"古川邸","customer":"古川","date":"2026-06-18","time":"am","type":"aircon","staffIds":[103,104],"memo":"HKホーム 9:00〜AC2台","id":2028,"done":false},{"site":"アルゾーニ","customer":"","date":"2026-06-18","time":"pm","type":"house","staffIds":[103,104],"memo":"サニ 13:30〜2人","id":2029,"done":false},{"site":"みらい平クリニック","customer":"","date":"2026-06-19","time":"am","type":"house","staffIds":[102,103],"memo":"9:00〜3人","id":2030,"done":false},{"site":"タキロン定期","customer":"","date":"2026-06-19","time":"am","type":"common","staffIds":[103,104],"memo":"外注:リファイン・ナカケン・ナガイ","id":2031,"done":false},{"site":"積水ハウス5・6F","customer":"積水ハウス","date":"2026-06-20","time":"am","type":"house","staffIds":[102,103,104,108],"memo":"9:00〜4人","id":2032,"done":false},{"site":"大久保歯科医院","customer":"","date":"2026-06-21","time":"am","type":"house","staffIds":[101,102,103,104,107],"memo":"9:00〜4人","id":2033,"done":false},{"site":"清六家下妻店","customer":"","date":"2026-06-21","time":"pm","type":"house","staffIds":[101,102,103],"memo":"","id":2034,"done":false},{"site":"古河中エアコン","customer":"","date":"2026-06-22","time":"am","type":"aircon","staffIds":[101,105,106],"memo":"広瀬 9:00〜 外注:リファイン","id":2035,"done":false},{"site":"スマイルサポート","customer":"","date":"2026-06-22","time":"am","type":"house","staffIds":[103],"memo":"Tic 9:00〜3人 外注:リファイン2","id":2036,"done":false},{"site":"みらい平クリニック 残りガラス","customer":"","date":"2026-06-22","time":"pm","type":"house","staffIds":[102,104],"memo":"","id":2037,"done":false},{"site":"古河一高","customer":"","date":"2026-06-23","time":"am","type":"aircon","staffIds":[101,103],"memo":"9:00〜天カセAC4台","id":2038,"done":false},{"site":"深澤歯科","customer":"","date":"2026-06-24","time":"am","type":"house","staffIds":[101,104],"memo":"9:00〜2人","id":2039,"done":false},{"site":"政翔不動産","customer":"","date":"2026-06-24","time":"pm","type":"house","staffIds":[101,104],"memo":"事務所2人","id":2040,"done":false},{"site":"清六家結城店","customer":"","date":"2026-06-24","time":"am","type":"house","staffIds":[101,102,103],"memo":"","id":2041,"done":false},{"site":"なるしま内科","customer":"","date":"2026-06-25","time":"am","type":"aircon","staffIds":[102,103,104],"memo":"9:00〜AC7台","id":2042,"done":false},{"site":"マガーリ","customer":"","date":"2026-06-25","time":"am","type":"house","staffIds":[102,104],"memo":"9:00〜2人","id":2043,"done":false},{"site":"坂本医院","customer":"","date":"2026-06-26","time":"am","type":"house","staffIds":[105,102],"memo":"","id":2044,"done":false},{"site":"チェスト・トーエネック・ノーバル","customer":"","date":"2026-06-26","time":"am","type":"common","staffIds":[101],"memo":"","id":2045,"done":false},{"site":"日信第二ビル・サンライズビル","customer":"","date":"2026-06-26","time":"pm","type":"house","staffIds":[102],"memo":"","id":2046,"done":false},{"site":"かわごえ皮膚科","customer":"","date":"2026-06-27","time":"am","type":"house","staffIds":[],"memo":"9:30〜2人","id":2047,"done":false},{"site":"木村邸","customer":"木村","date":"2026-06-27","time":"pm","type":"aircon","staffIds":[101],"memo":"HKホーム 13:30〜AC2台 外注:リファイン","id":2048,"done":false},{"site":"藤代紫水","customer":"","date":"2026-06-27","time":"pm","type":"house","staffIds":[],"memo":"外注:リファイン2","id":2049,"done":false},{"site":"埠頭","customer":"","date":"2026-06-28","time":"am","type":"house","staffIds":[102,103,107],"memo":"","id":2050,"done":false},{"site":"チェスト・トーエネック・ノーバル","customer":"","date":"2026-06-28","time":"am","type":"common","staffIds":[101],"memo":"外注:ナガイ","id":2051,"done":false},{"site":"スカイクリーン","customer":"","date":"2026-06-29","time":"am","type":"house","staffIds":[101,102],"memo":"サニ 9:00〜4人 外注:リファイン2","id":2052,"done":false},{"site":"石下保育園","customer":"","date":"2026-06-29","time":"am","type":"aircon","staffIds":[103],"memo":"9:00〜天吊り4台 外注:リファイン","id":2053,"done":false},{"site":"赤荻邸","customer":"赤荻","date":"2026-06-29","time":"am","type":"aircon","staffIds":[102],"memo":"9:00〜AC1台","id":2054,"done":false},{"site":"サンユウテック","customer":"","date":"2026-06-29","time":"pm","type":"house","staffIds":[101,104],"memo":"9:00〜3人","id":2055,"done":false}]');
-      localStorage.setItem('hc5_staffs', '[{"id":101,"name":"鈴木"},{"id":102,"name":"糸賀"},{"id":103,"name":"塚本"},{"id":104,"name":"天ヶ谷"},{"id":105,"name":"会長"},{"id":106,"name":"待子"},{"id":107,"name":"片山"},{"id":108,"name":"逆井"},{"id":109,"name":"社長"}]');
-    } catch(e){}
-  })();
-  // ===================================
-  </script></body>の直前に注入
-  const exportHtml = originalHtml.replace('</body>', injection + '</body>');
-
-  // ダウンロード
-  const blob = new Blob([exportHtml], {type:'text/html;charset=utf-8'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  const now  = new Date();
-  const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
-  a.href     = url;
-  a.download = `現場管理システム_${dateStr}.html`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
 init();
 </script>
-
-
-</body></html>
+</body>
+</html>
