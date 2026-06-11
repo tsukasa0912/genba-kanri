@@ -7,16 +7,17 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --blue:    #3b82f6; --blue-d: #2563eb; --blue-lt: #eff6ff;
-    --green:   #22c55e; --green-d: #16a34a;
-    --red:     #ef4444;
-    --gray:    #64748b; --gray-lt: #f1f5f9;
-    --border:  #e2e8f0; --text: #1e293b; --text-2: #64748b;
-    --shadow:  0 1px 3px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+    /* メインカラー：彩度を抑えた落ち着いたインディゴ系（モニター表示でも目に優しい） */
+    --blue:    #5b7fb5; --blue-d: #4a6a9c; --blue-lt: #eaf0f7;
+    --green:   #6fa888; --green-d: #588a6e;
+    --red:     #c4766b;
+    --gray:    #8a93a3; --gray-lt: #f0f1f3;
+    --border:  #e4e6ea; --text: #3d4350; --text-2: #808796;
+    --shadow:  0 1px 3px rgba(30,41,59,0.06);
+    --shadow-md: 0 4px 16px rgba(30,41,59,0.08);
     --radius:  10px; --cell-h: 130px;
   }
-  body { font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Helvetica Neue',Arial,sans-serif; background: #f8fafc; color: var(--text); }
+  body { font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Helvetica Neue',Arial,sans-serif; background: #f4f3f1; color: var(--text); }
 
   /* TOPBAR */
   .topbar { background:#fff; border-bottom:1px solid var(--border); box-shadow:var(--shadow); position:sticky; top:0; z-index:50; }
@@ -33,16 +34,16 @@
   .btn-primary { background:var(--blue); color:#fff; } .btn-primary:hover { background:var(--blue-d); }
   .btn-success { background:var(--green); color:#fff; } .btn-success:hover { background:var(--green-d); }
   .btn-ghost { background:var(--gray-lt); color:var(--gray); } .btn-ghost:hover { background:var(--border); }
-  .btn-danger { background:#fee2e2; color:var(--red); } .btn-danger:hover { background:#fecaca; }
+  .btn-danger { background:#f3e3e1; color:var(--red); } .btn-danger:hover { background:#ecd2cf; }
 
   /* スタッフドロワー */
   .staff-bar { border-top:1px solid var(--border); background:#fafbfc; overflow:hidden; max-height:0; transition:max-height .25s ease, padding .25s ease; }
-  .staff-bar.open { max-height:120px; padding:10px 24px; }
+  .staff-bar.open { max-height:220px; padding:10px 24px; overflow-y:auto; }
   .staff-bar-inner { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
   .staff-bar-label { font-size:11px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.6px; white-space:nowrap; }
   .staff-chips { display:flex; flex-wrap:wrap; gap:6px; flex:1; }
   .staff-chip { display:flex; align-items:center; gap:5px; background:#fff; border:1.5px solid var(--border); border-radius:20px; padding:3px 10px 3px 5px; font-size:12px; font-weight:600; color:var(--text); }
-  .s-av { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; flex-shrink:0; }
+  .s-av { width:20px; height:20px; min-width:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; flex-shrink:0; }
   .staff-chip-del { background:none; border:none; color:#cbd5e0; font-size:14px; cursor:pointer; padding:0; line-height:1; margin-left:2px; }
   .staff-chip-del:hover { color:var(--red); }
   .staff-add-inline { display:flex; gap:6px; }
@@ -68,7 +69,7 @@
   .calendar { background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-md); border:1px solid var(--border); }
   .cal-head { display:grid; grid-template-columns:repeat(7,1fr); background:var(--gray-lt); border-bottom:1px solid var(--border); }
   .cal-head-cell { text-align:center; padding:9px 0; font-size:12px; font-weight:700; color:var(--text-2); }
-  .cal-head-cell:first-child { color:#ef4444; }
+  .cal-head-cell:first-child { color:#c4766b; }
   .cal-head-cell:last-child { color:var(--blue); }
   .cal-body { display:grid; grid-template-columns:repeat(7,1fr); }
   .cal-cell { border-right:1px solid var(--border); border-bottom:1px solid var(--border); height:var(--cell-h); padding:5px 4px 4px; cursor:pointer; transition:background .1s; overflow:hidden; display:flex; flex-direction:column; }
@@ -79,12 +80,12 @@
   .cal-cell.today { background:var(--blue-lt); }
   .date-num { font-size:12px; font-weight:700; color:var(--text-2); width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0; margin-bottom:2px; align-self:flex-start; }
   .cal-cell.today .date-num { background:var(--blue); color:#fff; }
-  .sun .date-num { color:#ef4444; }
+  .sun .date-num { color:#c4766b; }
   .sat .date-num { color:var(--blue); }
   .cal-cell.today.sun .date-num, .cal-cell.today.sat .date-num { color:#fff; }
   .chips-wrap { flex:1; overflow:hidden; display:flex; flex-direction:column; gap:2px; }
 
-  /* 現場チップ — 3行構成 */
+  /* 現場チップ — 2行構成（現場名 / 時間帯+担当） */
   .job-chip { border-radius:4px; padding:2px 5px; font-size:10px; font-weight:600; color:#fff; cursor:pointer; line-height:1.45; overflow:hidden; flex-shrink:0; transition:opacity .1s; }
   .job-chip:hover { opacity:.82; }
   .job-chip.done { opacity:.38; }
@@ -95,12 +96,12 @@
   .more-chip { font-size:10px; color:#94a3b8; padding:0 3px; flex-shrink:0; }
 
   /* カテゴリカラー */
-  .type-aircon { background:#3b82f6; }
-  .type-floor  { background:#8b5cf6; }
-  .type-house  { background:#22c55e; }
-  .type-common { background:#06b6d4; }
-  .type-weed   { background:#f59e0b; }
-  .type-other  { background:#94a3b8; }
+  .type-aircon { background:#6f97c2; }  /* 落ち着いた青 */
+  .type-floor  { background:#9d8cc4; }  /* 落ち着いた紫 */
+  .type-house  { background:#74ad8a; }  /* 落ち着いた緑 */
+  .type-common { background:#5fa3a8; }  /* 落ち着いたシアン */
+  .type-weed   { background:#cf9a5c; }  /* 落ち着いたオレンジ */
+  .type-other  { background:#a3a8b3; }  /* 落ち着いたグレー */
 
   /* モーダル */
   .modal-bg { display:none; position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(2px); }
@@ -121,9 +122,9 @@
   .seg label { flex:1; text-align:center; padding:7px 0; font-size:13px; font-weight:600; color:var(--text-2); border-radius:6px; cursor:pointer; transition:all .15s; }
   .seg input[type=radio]:checked + label { background:#fff; color:var(--blue); box-shadow:var(--shadow); }
   .staff-check-list { border:1.5px solid var(--border); border-radius:8px; padding:8px; background:#fafbfc; max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:5px; }
-  .sc-item { display:flex; align-items:center; gap:8px; cursor:pointer; padding:2px 0; }
-  .sc-item input[type=checkbox] { width:15px; height:15px; accent-color:var(--blue); cursor:pointer; flex-shrink:0; }
-  .sc-lbl { font-size:14px; color:var(--text); }
+  .sc-item { display:flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:8px; cursor:pointer; padding:4px 2px; width:100%; }
+  .sc-item input[type=checkbox] { width:16px; height:16px; min-width:16px; accent-color:var(--blue); cursor:pointer; flex-shrink:0; margin:0; }
+  .sc-lbl { font-size:14px; color:var(--text); white-space:nowrap; }
   .d-row { display:flex; gap:10px; margin-bottom:10px; font-size:14px; align-items:flex-start; }
   .d-lbl { font-size:11px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.4px; min-width:72px; padding-top:2px; flex-shrink:0; }
   .d-val { color:var(--text); line-height:1.5; }
@@ -131,12 +132,43 @@
   .staff-tags { display:flex; flex-wrap:wrap; gap:5px; }
   .staff-tag { background:var(--blue-lt); color:var(--blue-d); border-radius:20px; padding:2px 10px; font-size:12px; font-weight:600; }
   .done-toggle { background:var(--blue-lt); border:1.5px solid var(--blue); color:var(--blue-d); border-radius:8px; padding:7px 14px; font-size:13px; font-weight:700; cursor:pointer; margin-right:auto; transition:all .15s; }
-  .done-toggle.done { background:#f0fdf4; border-color:var(--green); color:var(--green-d); }
+  .done-toggle.done { background:#eaf2ee; border-color:var(--green); color:var(--green-d); }
   .divider { height:1px; background:var(--border); margin:16px 0; }
   .btn-row { display:flex; gap:8px; justify-content:flex-end; margin-top:20px; flex-wrap:wrap; }
+
+  /* パスワードロック画面 */
+  #lockScreen {
+    position:fixed; inset:0; background:#f8fafc; z-index:1000;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #lockScreen.hidden { display:none; }
+  .lock-box { background:#fff; border-radius:16px; padding:40px 36px; box-shadow:0 10px 40px rgba(0,0,0,.12); width:340px; max-width:90vw; text-align:center; }
+  .lock-icon { font-size:40px; margin-bottom:8px; }
+  .lock-title { font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .lock-sub { font-size:13px; color:var(--text-2); margin-bottom:20px; }
+  .lock-input { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:8px; font-size:18px; text-align:center; letter-spacing:4px; outline:none; margin-bottom:12px; }
+  .lock-input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(59,130,246,.12); }
+  .lock-btn { width:100%; padding:12px; background:var(--blue); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; }
+  .lock-btn:hover { background:var(--blue-d); }
+  .lock-error { color:var(--red); font-size:13px; margin-top:10px; min-height:18px; }
+  #appRoot.locked { display:none; }
 </style>
 </head>
 <body>
+
+<!-- パスワードロック画面 -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">現場管理システム</div>
+    <div class="lock-sub">パスワードを入力してください</div>
+    <input type="password" id="lockInput" class="lock-input" placeholder="••••" inputmode="numeric" maxlength="8" onkeydown="if(event.key==='Enter')checkPassword()">
+    <button class="lock-btn" onclick="checkPassword()">開く</button>
+    <div class="lock-error" id="lockError"></div>
+  </div>
+</div>
+
+<div id="appRoot" class="locked">
 
 <div class="topbar">
   <div class="topbar-main">
@@ -148,7 +180,7 @@
     </div>
     <div class="topbar-right">
       <button class="btn btn-ghost" onclick="goToday()">今月</button>
-      <button class="btn btn-ghost" onclick="toggleStaffBar()">👷 スタッフ管理</button>
+      <button class="btn btn-ghost" onclick="toggleStaffBar()">👷 スタッフ／外注管理</button>
       <button class="btn btn-success" onclick="openAddModal()">＋ 新規登録</button>
     </div>
   </div>
@@ -159,6 +191,14 @@
       <div class="staff-add-inline">
         <input type="text" id="newStaffName" placeholder="名前を入力" onkeydown="if(event.key==='Enter')addStaff()">
         <button onclick="addStaff()">追加</button>
+      </div>
+    </div>
+    <div class="staff-bar-inner" style="margin-top:8px;">
+      <span class="staff-bar-label">外注</span>
+      <div class="staff-chips" id="vendorChips"></div>
+      <div class="staff-add-inline">
+        <input type="text" id="newVendorName" placeholder="業者名を入力" onkeydown="if(event.key==='Enter')addVendor()">
+        <button onclick="addVendor()">追加</button>
       </div>
     </div>
   </div>
@@ -218,6 +258,7 @@
       </select>
     </div>
     <div class="form-section"><label>担当スタッフ（複数可）</label><div class="staff-check-list" id="staffCheckList"></div></div>
+    <div class="form-section"><label>外注業者（複数可）</label><div class="staff-check-list" id="vendorCheckList"></div></div>
     <div class="form-section"><label>メモ</label><textarea id="f_memo" placeholder="備考・注意事項など"></textarea></div>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="closeModal('editModal')">キャンセル</button>
@@ -239,6 +280,7 @@
     <div class="d-row"><span class="d-lbl">作業日</span><span class="d-val" id="d_date"></span></div>
     <div class="d-row"><span class="d-lbl">時間帯</span><span class="d-val" id="d_time"></span></div>
     <div class="d-row"><span class="d-lbl">担当</span><div class="staff-tags" id="d_staff"></div></div>
+    <div class="d-row"><span class="d-lbl">外注</span><div class="staff-tags" id="d_vendor"></div></div>
     <div class="d-row"><span class="d-lbl">メモ</span><span class="d-val" id="d_memo"></span></div>
     <div class="divider"></div>
     <div class="btn-row">
@@ -249,19 +291,37 @@
     </div>
   </div>
 </div>
+</div><!-- /#appRoot -->
 
 <script>
+/* =====================================================================
+   現場管理システム
+   - データはブラウザの localStorage に保存されます
+   - パスワードは下の APP_PASSWORD で変更できます
+   ===================================================================== */
+
+/* ---- 設定値 ---- */
+const APP_PASSWORD = '3973'; // ←ここを好きな数字・文字列に変更してください
+
 const TYPE_LABELS  = { aircon:'エアコン洗浄', floor:'床清掃', house:'ハウスクリーニング', common:'共有部洗浄', weed:'除草作業', other:'その他' };
 const TYPE_CLASSES = { aircon:'type-aircon', floor:'type-floor', house:'type-house', common:'type-common', weed:'type-weed', other:'type-other' };
-const COLORS = ['#3b82f6','#06b6d4','#f59e0b','#8b5cf6','#ef4444','#22c55e','#ec4899','#0ea5e9','#14b8a6','#f97316'];
+const COLORS = ['#6f97c2','#5fa3a8','#cf9a5c','#9d8cc4','#c4766b','#74ad8a','#c98ba8','#7ba0bd','#7fb3a8','#d0a06f'];
 
-let currentYear, currentMonth, jobs=[], staffs=[], editingId=null, viewingId=null;
+/* ---- アプリ状態 ---- */
+let currentYear, currentMonth, jobs=[], staffs=[], vendors=[], editingId=null, viewingId=null;
 
 /* ---- PDF由来のスタッフ ---- */
 const DEFAULT_STAFFS = [
   {id:101,name:'鈴木'},{id:102,name:'糸賀'},{id:103,name:'塚本'},
   {id:104,name:'天ヶ谷'},{id:105,name:'会長'},{id:106,name:'待子'},
   {id:107,name:'片山'},{id:108,name:'逆井'},{id:109,name:'社長'},
+];
+
+/* ---- PDF由来の外注業者 ---- */
+const DEFAULT_VENDORS = [
+  {id:201,name:'リファイン'},{id:202,name:'リファイン2'},{id:203,name:'リファイン3'},
+  {id:204,name:'パス'},{id:205,name:'ナカケン'},{id:206,name:'鉄板'},
+  {id:207,name:'ナガイ'},{id:208,name:'植研'},{id:209,name:'K-BOX'},
 ];
 
 /* ---- PDF由来の現場データ（2026年6月） ---- */
@@ -357,32 +417,37 @@ function init() {
   const t=new Date(); currentYear=t.getFullYear(); currentMonth=t.getMonth()+1;
   loadData();
   if (!staffs.length) staffs=[...DEFAULT_STAFFS];
+  if (!vendors.length) vendors=[...DEFAULT_VENDORS];
   // 6月のPDFデータをマージ（既存データがなければ投入）
   const has2026June = jobs.some(j=>j.date&&j.date.startsWith('2026-06'));
   if (!has2026June) {
-    PDF_JOBS.forEach((j,i)=>{ jobs.push({...j, id: 2000+i, done:false}); });
+    PDF_JOBS.forEach((j,i)=>{ jobs.push({...j, vendorIds:j.vendorIds||[], id: 2000+i, done:false}); });
   }
   saveData();
   render();
 }
 
 function saveData(){
-  try { localStorage.setItem('hc5_jobs',JSON.stringify(jobs)); localStorage.setItem('hc5_staffs',JSON.stringify(staffs)); } catch(e){}
+  try {
+    localStorage.setItem('hc5_jobs',JSON.stringify(jobs));
+    localStorage.setItem('hc5_staffs',JSON.stringify(staffs));
+    localStorage.setItem('hc5_vendors',JSON.stringify(vendors));
+  } catch(e){}
 }
 function loadData(){
   try {
     const j=localStorage.getItem('hc5_jobs'); if(j) jobs=JSON.parse(j);
     const s=localStorage.getItem('hc5_staffs'); if(s) staffs=JSON.parse(s);
+    const v=localStorage.getItem('hc5_vendors'); if(v) vendors=JSON.parse(v);
   } catch(e){}
 }
 
+function vColor(i){ return COLORS[(i+5)%COLORS.length]; }
 function sColor(i){ return COLORS[i%COLORS.length]; }
 function staffName(id){ const s=staffs.find(s=>s.id===id); return s?s.name:''; }
-function staffIdxByName(name){ return staffs.findIndex(s=>s.name===name); }
-function staffIdx(id){ return staffs.findIndex(s=>s.id===id); }
 
 /* ---- RENDER ---- */
-function render(){ renderNav(); renderSummary(); renderCalendar(); renderStaffChips(); }
+function render(){ renderNav(); renderSummary(); renderCalendar(); renderStaffChips(); renderVendorChips(); }
 
 function renderNav(){
   const n=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
@@ -396,8 +461,8 @@ function renderSummary(){
   const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById('summary').innerHTML=`
     <div class="s-card"><div class="sl">今月の現場</div><div class="sv">${mj.length}<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
-    <div class="s-card"><div class="sl">完了</div><div class="sv" style="color:#16a34a">${done}<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
-    <div class="s-card"><div class="sl">未完了</div><div class="sv" style="color:#dc2626">${mj.length-done}<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
+    <div class="s-card"><div class="sl">完了</div><div class="sv" style="color:var(--green-d)">${done}<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
+    <div class="s-card"><div class="sl">未完了</div><div class="sv" style="color:var(--red)">${mj.length-done}<span style="font-size:13px;font-weight:500;color:var(--text-2)"> 件</span></div></div>
     <div class="s-card"><div class="sl">最多種別</div><div class="sv" style="font-size:14px;margin-top:4px">${top&&top[1]>0?TYPE_LABELS[top[0]]:'—'}</div></div>`;
 }
 
@@ -489,6 +554,31 @@ function deleteStaff(id){
   saveData(); render();
 }
 
+function renderVendorChips(){
+  const c=document.getElementById('vendorChips');
+  if(!vendors.length){ c.innerHTML='<span style="font-size:12px;color:#94a3b8">外注業者がいません</span>'; return; }
+  c.innerHTML=vendors.map((v,i)=>`
+    <div class="staff-chip">
+      <span class="s-av" style="background:${vColor(i)}">${v.name.charAt(0)}</span>
+      ${v.name}
+      <button class="staff-chip-del" onclick="deleteVendor(${v.id})">×</button>
+    </div>`).join('');
+}
+
+function addVendor(){
+  const inp=document.getElementById('newVendorName'), name=inp.value.trim();
+  if(!name) return;
+  if(vendors.find(v=>v.name===name)){alert('同じ名前の外注業者がいます');return;}
+  vendors.push({id:Date.now()+1,name}); inp.value=''; saveData(); renderVendorChips();
+}
+
+function deleteVendor(id){
+  if(!confirm('この外注業者を削除しますか？')) return;
+  vendors=vendors.filter(v=>v.id!==id);
+  jobs=jobs.map(j=>({...j,vendorIds:(j.vendorIds||[]).filter(vid=>vid!==id)}));
+  saveData(); render();
+}
+
 /* ---- 現場フォーム ---- */
 function renderStaffCheckList(selIds=[]){
   const c=document.getElementById('staffCheckList');
@@ -503,6 +593,19 @@ function renderStaffCheckList(selIds=[]){
 
 function getSelStaffIds(){ return Array.from(document.querySelectorAll('#staffCheckList input:checked')).map(el=>Number(el.value)); }
 
+function renderVendorCheckList(selIds=[]){
+  const c=document.getElementById('vendorCheckList');
+  if(!vendors.length){ c.innerHTML='<span style="font-size:12px;color:#94a3b8">先に外注業者を登録してください</span>'; return; }
+  c.innerHTML=vendors.map((v,i)=>`
+    <label class="sc-item">
+      <input type="checkbox" value="${v.id}" ${selIds.includes(v.id)?'checked':''}>
+      <span class="s-av" style="background:${vColor(i)}">${v.name.charAt(0)}</span>
+      <span class="sc-lbl">${v.name}</span>
+    </label>`).join('');
+}
+
+function getSelVendorIds(){ return Array.from(document.querySelectorAll('#vendorCheckList input:checked')).map(el=>Number(el.value)); }
+
 function openAddModal(dateStr){
   editingId=null;
   document.getElementById('modalTitle').textContent='新規現場登録';
@@ -513,6 +616,7 @@ function openAddModal(dateStr){
   document.getElementById('f_type').value='aircon';
   document.getElementById('f_memo').value='';
   renderStaffCheckList([]);
+  renderVendorCheckList([]);
   document.getElementById('editModal').classList.add('show');
 }
 
@@ -528,6 +632,7 @@ function openEditFromDetail(){
   document.getElementById('f_type').value=job.type;
   document.getElementById('f_memo').value=job.memo||'';
   renderStaffCheckList(job.staffIds||[]);
+  renderVendorCheckList(job.vendorIds||[]);
   document.getElementById('editModal').classList.add('show');
 }
 
@@ -543,6 +648,7 @@ function saveJob(){
     time:document.querySelector('input[name=ts]:checked').value,
     type:document.getElementById('f_type').value,
     staffIds:getSelStaffIds(),
+    vendorIds:getSelVendorIds(),
     memo:document.getElementById('f_memo').value.trim(),
     done:editingId?(jobs.find(j=>j.id===editingId)||{}).done||false:false,
   };
@@ -564,6 +670,10 @@ function openDetail(id){
   document.getElementById('d_staff').innerHTML=ids.length
     ?ids.map(id=>{const s=staffs.find(s=>s.id===id);return s?`<span class="staff-tag">${s.name}</span>`:''}).join('')
     :'<span style="color:#94a3b8">未定</span>';
+  const vids=job.vendorIds||[];
+  document.getElementById('d_vendor').innerHTML=vids.length
+    ?vids.map(id=>{const v=vendors.find(v=>v.id===id);return v?`<span class="staff-tag">${v.name}</span>`:''}).join('')
+    :'<span style="color:#94a3b8">なし</span>';
   document.getElementById('d_memo').textContent=job.memo||'—';
   const btn=document.getElementById('doneToggle');
   btn.textContent=job.done?'✅ 完了済み（クリックで戻す）':'完了にする ✓';
@@ -587,7 +697,31 @@ function goToday(){ const t=new Date(); currentYear=t.getFullYear(); currentMont
 
 document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('show');}));
 
-init();
+/* ---- パスワード認証 ---- */
+function checkPassword(){
+  const input = document.getElementById('lockInput').value;
+  if (input === APP_PASSWORD) {
+    document.getElementById('lockScreen').classList.add('hidden');
+    document.getElementById('appRoot').classList.remove('locked');
+    try { sessionStorage.setItem('hc5_unlocked','1'); } catch(e){}
+    init();
+  } else {
+    document.getElementById('lockError').textContent = 'パスワードが違います';
+    document.getElementById('lockInput').value = '';
+    document.getElementById('lockInput').focus();
+  }
+}
+
+// このセッション内ですでに解除済みならスキップ
+(function(){
+  try {
+    if (sessionStorage.getItem('hc5_unlocked') === '1') {
+      document.getElementById('lockScreen').classList.add('hidden');
+      document.getElementById('appRoot').classList.remove('locked');
+      init();
+    }
+  } catch(e){}
+})();
 </script>
 </body>
 </html>
